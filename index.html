@@ -11,13 +11,19 @@
 </head>
 
 <body>
-    <div id="app">
-        <chat-runner></chat-runner>
+    <div class="app" id="app">
+        <chat-runner
+            :lesson="lesson"
+        ></chat-runner>
     </div>
     <script>
+        var lesson = { "flow": [["1", "chat", "안녕하세요 여러분. 반갑습니다."], ["2", "chat", "저는 캣봇. 고양이 봇이죠. 프로그래머입니다."], ["3", "chat", "여러분의 학습을 돕기 위해 이렇게 찾아와 보았습니다. 꾸벅."]] }
         new Vue({
             el: '#app',
-        });
+            data: {
+                lesson: lesson,
+            },
+        })
     </script>
 </body>
 
