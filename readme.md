@@ -61,3 +61,29 @@ For a working example, run `$ yarn dev` script and check out the example web pag
 ### VueChatRunner
 
 `VueChatRunner` component supports the web-based programming lessons specially designed for the component. This allows users to learn how to programming using Python 3 in a very interactive environment created with an instructor bot. 
+
+#### Props & Events
+
+Following props and events are available in the `VueChatRunner` component. 
+
+**`lesson`**
+
+An object that includes all essential materials and contents for the *lesson* in the chat runner.
+
+**`initState`**
+
+An object that includes initial state to start from, in this lesson. It is like a save file to load in a game. User starts from the state that was saved from the last session.
+
+**`initSrc`**
+
+A user code content to start from.
+
+**`@saveState`**
+
+An event that is triggered when the current state in the lesson is changed. The current state is provided as a parameter.
+
+**`@saveSrc`**
+
+An event that is triggered when the current user code content has to be saved. The current user code content is provided as a parameter.
+
+
