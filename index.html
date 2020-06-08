@@ -3,11 +3,22 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="/node_modules/vue/dist/vue.js"></script>
     <script src="/assets/vue-chat-runner.bundle.js"></script>
+    <script>
+        Vue.component('chat-runner', VueChatRunner)
+    </script>
 </head>
 
 <body>
-    Hello world
+    <div id="wrapper">
+        <chat-runner></chat-runner>
+    </div>
+    <script>
+        new Vue({
+            el: '#wrapper',
+        });
+    </script>
 </body>
 
 </html>

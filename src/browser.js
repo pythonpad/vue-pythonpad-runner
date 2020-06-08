@@ -1,9 +1,9 @@
-import VueChatRunner from './core/vue-chat-runner';
+import VueChatRunner from './core/chat-runner';
 
 var globalRef = (typeof this !== "undefined") ? this : window;
 
 if (module.hot) {
-    module.hot.accept('./core/vue-chat-runner', () => {
+    module.hot.accept('./core/chat-runner', () => {
         console.log('Accepting the updated Brython Runner module!')
     })
 }

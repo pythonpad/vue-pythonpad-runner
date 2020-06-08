@@ -1,3 +1,3 @@
-import VueChatRunner from './core/vue-chat-runner'
+import ChatRunner from './core/chat-runner'
 
-export default VueChatRunner
+export default ChatRunner

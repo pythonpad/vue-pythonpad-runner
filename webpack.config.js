@@ -1,4 +1,5 @@
 const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
 
 module.exports = mode => ({
@@ -13,7 +14,7 @@ module.exports = mode => ({
         filename: '[name].js',
     },
     resolve: {
-        extensions: ['.js'],
+        extensions: ['.js', '.vue'],
         modules: ['node_modules'],
     },
     module: {
@@ -22,12 +23,29 @@ module.exports = mode => ({
                 test: /\.jsx?$/,
                 include: [path.resolve(__dirname, 'src')],
                 use: ['babel-loader'],
+            },
+            {
+                test: /\.vue$/,
+                include: [path.resolve(__dirname, 'src')],
+                loader: 'vue-loader',
+            },
+            {
+                test: /\.css$/,
+                use: ['vue-style-loader', 'style-loader', 'css-loader'],
+            },
+            {
+                test: /\.(png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {}
+                }]
             }
         ],
     },
-    plugins: mode === 'development' ? [
-        new webpack.HotModuleReplacementPlugin(),
-    ] : [],
+    plugins: [
+        new VueLoaderPlugin(),
+        ...(mode === 'development' ? [new webpack.HotModuleReplacementPlugin()] : []),
+    ],
     devServer: {
         hot: true,
         historyApiFallback: true,
