@@ -4,7 +4,9 @@
             <div class="material-box">
             </div>
             <div class="dialog-box">
-                {{lesson}}
+                <dialog
+                    :messages="messages"
+                ></dialog>
             </div>
         </div>
         <div class="right-column">
@@ -14,21 +16,28 @@
     </div>
 </template>
 <script>
+import Dialog from './dialog'
 export default {
     name: 'chat-runner',
     props: [
         'lesson',
     ],
+    components: {
+        Dialog,
+    },
     data() {
         return {
-
+            cursor: 0,
+            messages: [],
         }
     },
     mounted() {
-        
+        this.readFlowline()
     },
     methods: {
-        
+        readFlow() {
+
+        },
     },
     watch: {
         
