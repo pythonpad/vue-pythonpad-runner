@@ -6,6 +6,7 @@
             <div class="chat-box">
                 <chat
                     :messages="messages"
+                    :agents="lesson.agents"
                 ></chat>
             </div>
         </div>
@@ -16,6 +17,7 @@
     </div>
 </template>
 <script>
+import './common.css'
 import Chat from './chat'
 export default {
     name: 'chat-runner',
