@@ -17,7 +17,55 @@
         ></chat-runner>
     </div>
     <script>
-        var lesson = { "flow": [["1", "chat", "안녕하세요 여러분. 반갑습니다."], ["2", "chat", "저는 캣봇. 고양이 봇이죠. 프로그래머입니다."], ["3", "chat", "여러분의 학습을 돕기 위해 이렇게 찾아와 보았습니다. 꾸벅."]] }
+        var lesson = {
+            startActionId: 'a1',
+            actions: {
+                a1: {
+                    id: 'a1',
+                    type: 'message',
+                    agentId: 'catbot',
+                    body: '안녕하세요',
+                    nextId: 'a2',
+                },
+                a2: {
+                    id: 'a2',
+                    type: 'message',
+                    agentId: 'catbot',
+                    body: '마이크테스트 하나 둘 셋 하나 둘셋',
+                    nextId: 'a3',
+                },
+                a3: {
+                    id: 'a3',
+                    type: 'message',
+                    agentId: 'catbot',
+                    body: '메시지는 잘 보이시나요',
+                    nextId: 'a4',
+                },
+                a4: {
+                    id: 'a4',
+                    type: 'pause',
+                    nextId: 'a5',
+                },
+                a5: {
+                    id: 'a5',
+                    type: 'message',
+                    agentId: 'catbot',
+                    body: '그럼 잘 보이시는걸로.',
+                    nextId: 'a6',
+                },
+                a6: {
+                    id: 'a6',
+                    type: 'exit',
+                },
+            },
+            agents: {
+                catbot: {
+                    id: 'catbot',
+                    name: '캣봇',
+                    image: '/cat.png',
+                },
+            }
+        }
         new Vue({
             el: '#app',
             data: {

@@ -3,10 +3,10 @@
         <div class="left-column">
             <div class="material-box">
             </div>
-            <div class="dialog-box">
-                <dialog
+            <div class="chat-box">
+                <chat
                     :messages="messages"
-                ></dialog>
+                ></chat>
             </div>
         </div>
         <div class="right-column">
@@ -16,26 +16,61 @@
     </div>
 </template>
 <script>
-import Dialog from './dialog'
+import Chat from './chat'
 export default {
     name: 'chat-runner',
     props: [
         'lesson',
     ],
     components: {
-        Dialog,
+        Chat,
     },
     data() {
         return {
-            cursor: 0,
+            cursor: null,
             messages: [],
         }
     },
     mounted() {
-        this.readFlowline()
+        this.readActions()
     },
     methods: {
-        readFlow() {
+        readActions() {
+            this.cursor = this.lesson.startActionId
+            this.readAction()
+        },
+        readAction() {
+            const action = this.lesson.actions[this.cursor]
+            switch (action.type) {
+                case 'message':
+                    this.handleMessage(action)
+                    break
+
+                case 'pause':
+                    this.handlePause(action)
+                    break
+
+                case 'exit':
+                    this.handleExit(action)
+                    break
+            
+                default:
+                    break
+            }
+        },
+        handleMessage(action) {
+            console.log('handleMessage')
+            this.messages.push({
+                agentId: action.agentId,
+                body: action.body,
+            })
+            this.cursor = action.nextId
+            setTimeout(() => this.readAction(), 500)
+        },
+        handlePause(action) {
+
+        },
+        handleExit(action) {
 
         },
     },
@@ -63,7 +98,7 @@ export default {
         height: 50%;
         border-bottom: 1px solid #ddd;
     }
-    .dialog-box {
+    .chat-box {
         position: absolute;
         bottom: 0;
         left: 0;

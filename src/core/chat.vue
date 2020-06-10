@@ -1,12 +1,16 @@
 <template>
-    <div class="dialog">
-        
+    <div class="chat">
+        <div class="message" 
+            v-for="(message, i) in messages"
+            :key="i"
+        >{{message}}</div>
     </div>
 </template>
 <script>
 export default {
-    name: 'dialog',
+    name: 'chat',
     props: [
+        'messages',
     ],
     data() {
         return {
@@ -24,7 +28,7 @@ export default {
 }
 </script>
 <style scoped>
-    .dialog {
+    .chat {
         width: 100%;
         height: 100%;
     }
