@@ -12,6 +12,10 @@
         </div>
         <div class="right-column">
             <div class="editor-box">
+                <editor
+                    :code="editorCode"
+                    @change="code => editorCode = code"
+                ></editor>
             </div>
         </div>
     </div>
@@ -19,6 +23,7 @@
 <script>
 import './common.css'
 import Chat from './chat'
+import Editor from './editor'
 export default {
     name: 'chat-runner',
     props: [
@@ -26,11 +31,13 @@ export default {
     ],
     components: {
         Chat,
+        Editor,
     },
     data() {
         return {
             cursor: null,
             messages: [],
+            editorCode: '',
         }
     },
     mounted() {
@@ -112,5 +119,9 @@ export default {
         width: 50%;
         height: 100%;
         border-left: 1px solid #ddd;
+    }
+    .editor-box {
+        width: 100%;
+        height: 100%;
     }
 </style>
