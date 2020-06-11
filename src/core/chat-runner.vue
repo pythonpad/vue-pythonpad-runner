@@ -37,7 +37,7 @@ export default {
         return {
             cursor: null,
             messages: [],
-            editorCode: '',
+            editorCode: 'print("hello world")',
         }
     },
     mounted() {

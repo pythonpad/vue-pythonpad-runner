@@ -108,7 +108,7 @@ export default {
         left: 0;
         width: 100%;
         height: 4rem;
-        padding: 0.4rem;
+        /* padding: 0.4rem; */
     }
     .input-row-inner-box {
         position: relative;
