@@ -15,7 +15,7 @@
             <div class="editor-box">
                 <editor
                     :code="editorCode"
-                    @change="code => editorCode = code"
+                    @change="handleEditorCodeChange"
                     @run="() => runEditorCode()"
                 ></editor>
             </div>
@@ -23,10 +23,11 @@
     </div>
 </template>
 <script>
-import './common.css'
-import BrythonRunner from 'brython-runner/lib/brython-runner.js';
+import { throttle } from 'throttle-debounce'
+import BrythonRunner from 'brython-runner/lib/brython-runner.js'
 import Chat from './chat'
 import Editor from './editor'
+import './common.css'
 
 export default {
     name: 'chat-runner',
@@ -34,6 +35,7 @@ export default {
         'lesson',
         'brythonStaticUrl',
         'staticUrl',
+        'initSrc'
     ],
     components: {
         Chat,
@@ -43,10 +45,11 @@ export default {
         return {
             cursor: null,
             messages: [],
-            editorCode: 'print("hello world")',
+            editorCode: this.initSrc,
         }
     },
     created() {
+        this.saveEditorCodeTh = throttle(1000, this.saveEditorCode)
         this.initRunner()
     },
     mounted() {
@@ -59,7 +62,9 @@ export default {
                 codeName: 'main.py', 
                 codeCwd: '.',
                 staticUrl: this.brythonStaticUrl,
-                paths: [],
+                paths: [
+                    `${this.staticUrl}/brythonlib`,
+                ],
                 stdout: {
                     write(content) {
                         messages.push({
@@ -80,6 +85,20 @@ export default {
                     },
                     flush() { },
                 },
+                onMsg(type, value) {
+                    switch (type) {
+                        case 'send_text':
+                            messages.push({
+                                type: 'message',
+                                agentId: 'python',
+                                body: value,
+                            })
+                            break
+                    
+                        default:
+                            break
+                    }
+                }
             }
             this.runner = new BrythonRunner(options)
         },
@@ -120,6 +139,13 @@ export default {
         },
         handleExit(action) {
 
+        },
+        handleEditorCodeChange(code) {
+            this.editorCode = code
+            this.saveEditorCodeTh()
+        },
+        saveEditorCode() {
+            this.$emit('save-src', this.editorCode)
         },
         async runEditorCode() {
             this.messages.push({

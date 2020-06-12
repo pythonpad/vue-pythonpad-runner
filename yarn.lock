@@ -1542,7 +1542,7 @@ browserslist@^4.12.0, browserslist@^4.8.5:
 
 "brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git":
   version "1.0.0"
-  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#abb818a22beacb7ee97d5064181432df0258eada"
+  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#a04ad117d79eab36d231b2ed8d1246340f3b334b"
 
 buffer-equal@^1.0.0:
   version "1.0.0"
@@ -5600,6 +5600,11 @@ terser@^4.1.2:
     commander "^2.20.0"
     source-map "~0.6.1"
     source-map-support "~0.5.12"
+
+throttle-debounce@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.2.1.tgz#fbd933ae6793448816f7d5b3cae259d464c98137"
+  integrity sha512-i9hAVld1f+woAiyNGqWelpDD5W1tpMroL3NofTz9xzwq6acWBlO2dC8k5EFSZepU6oOINtV5Q3aSPoRg7o4+fA==
 
 through2-filter@^3.0.0:
   version "3.0.0"

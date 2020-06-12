@@ -14,6 +14,7 @@ import 'codemirror/mode/meta'
 import 'codemirror/mode/python/python'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/ayu-mirage.css'
+import 'codemirror/addon/comment/comment'
 import 'codemirror/keymap/sublime'
 
 const DEFAULT_OPTIONS = {

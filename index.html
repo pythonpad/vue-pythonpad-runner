@@ -16,6 +16,8 @@
             :lesson="lesson"
             :brython-static-url="brythonStaticUrl"
             :static-url="staticUrl"
+            :init-src="code"
+            @save-src="code => saveCode(code)"
         ></chat-runner>
     </div>
     <script>
@@ -66,6 +68,11 @@
                     name: '캣봇',
                     image: '#{static}/images/cat.png',
                 },
+                python: {
+                    id: 'python',
+                    name: '파이썬',
+                    image: '#{static}/images/python.png',
+                }
             }
         }
         new Vue({
@@ -74,7 +81,16 @@
                 lesson: lesson,
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
+                code: localStorage.getItem('saved-code') || '',
             },
+            mounted: function() {
+
+            },
+            methods: {
+                saveCode: function(code) {
+                    localStorage.setItem('saved-code', code)
+                }
+            }
         })
     </script>
 </body>

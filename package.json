@@ -35,6 +35,7 @@
   "dependencies": {
     "@babel/runtime": "^7.10.2",
     "brython-runner": "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git",
-    "codemirror": "^5.54.0"
+    "codemirror": "^5.54.0",
+    "throttle-debounce": "^2.2.1"
   }
 }
