@@ -5,6 +5,7 @@
             </div>
             <div class="chat-box">
                 <chat
+                    :staticUrl="staticUrl"
                     :messages="messages"
                     :agents="lesson.agents"
                 ></chat>
@@ -15,6 +16,7 @@
                 <editor
                     :code="editorCode"
                     @change="code => editorCode = code"
+                    @run="() => runEditorCode()"
                 ></editor>
             </div>
         </div>
@@ -22,12 +24,16 @@
 </template>
 <script>
 import './common.css'
+import BrythonRunner from 'brython-runner/lib/brython-runner.js';
 import Chat from './chat'
 import Editor from './editor'
+
 export default {
     name: 'chat-runner',
     props: [
         'lesson',
+        'brythonStaticUrl',
+        'staticUrl',
     ],
     components: {
         Chat,
@@ -40,10 +46,43 @@ export default {
             editorCode: 'print("hello world")',
         }
     },
+    created() {
+        this.initRunner()
+    },
     mounted() {
         this.readActions()
     },
     methods: {
+        initRunner() {
+            const messages = this.messages
+            const options = {
+                codeName: 'main.py', 
+                codeCwd: '.',
+                staticUrl: this.brythonStaticUrl,
+                paths: [],
+                stdout: {
+                    write(content) {
+                        messages.push({
+                            type: 'output',
+                            outputType: 'stdout',
+                            body: content,
+                        })
+                    },
+                    flush() { },
+                },
+                stderr: {
+                    write(content) {
+                        messages.push({
+                            type: 'output',
+                            outputType: 'stderr',
+                            body: content,
+                        })
+                    },
+                    flush() { },
+                },
+            }
+            this.runner = new BrythonRunner(options)
+        },
         readActions() {
             this.cursor = this.lesson.startActionId
             this.readAction()
@@ -68,8 +107,8 @@ export default {
             }
         },
         handleMessage(action) {
-            console.log('handleMessage')
             this.messages.push({
+                type: 'message',
                 agentId: action.agentId,
                 body: action.body,
             })
@@ -81,6 +120,23 @@ export default {
         },
         handleExit(action) {
 
+        },
+        async runEditorCode() {
+            this.messages.push({
+                type: 'system',
+                body: '코드를 실행합니다.',
+            })
+            this.messages.push({
+                type: 'line',
+            })
+            await this.runner.runCode(this.editorCode)
+            this.messages.push({
+                type: 'line',
+            })
+            this.messages.push({
+                type: 'system',
+                body: '코드 실행이 종료되었습니다.',
+            })
         },
     },
     watch: {

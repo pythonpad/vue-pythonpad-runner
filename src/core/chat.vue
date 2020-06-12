@@ -1,22 +1,44 @@
 <template>
     <div class="chat fill">
         <div class="chat-container fill">
-            <div class="message-box fill">
-                <div class="message" 
-                    v-for="(message, i) in messages"
-                    :key="i"
-                >
-                    <div class="image-column">
-                        <img class="message-image" :src="agents[message.agentId].image"></img>
-                    </div>
-                    <div class="content-column">
-                        <div class="message-name">
-                            {{agents[message.agentId].name}}
+            <div class="message-box fill" ref="box">
+                <div class="message-box-content">
+                    <template v-for="(message, i) in messages">
+                        <div class="message" v-if="message.type == 'message'" :key="i">
+                            <div class="image-column">
+                                <img class="message-image" :src="agents[message.agentId].image.replace(/#{static}/g, staticUrl)"></img>
+                            </div>
+                            <div class="content-column">
+                                <div class="message-name">
+                                    {{agents[message.agentId].name}}
+                                </div>
+                                <div class="message-body">
+                                    {{message.body}}
+                                </div>
+                            </div>
                         </div>
-                        <div class="message-body">
-                            {{message.body}}
+                        <div class="message" v-else-if="message.type == 'system'" :key="i">
+                            <div class="image-column">
+                                <img class="message-image" :src="`${staticUrl}/images/system.png`"></img>
+                            </div>
+                            <div class="content-column">
+                                <div class="message-name">
+                                    시스템
+                                </div>
+                                <div class="message-body">
+                                    {{message.body}}
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="line" v-else-if="message.type == 'line'" :key="i">
+                        </div>
+                        <code 
+                            v-else-if="message.type == 'output'"
+                            class="output"  
+                            :class="{'error': message.outputType == 'stderr'}"
+                            :key="i"
+                        >{{message.body}}</code>
+                    </template>
                 </div>
             </div>
             <div class="input-row-box">
@@ -36,6 +58,7 @@
 export default {
     name: 'chat',
     props: [
+        'staticUrl',
         'agents',
         'messages',
     ],
@@ -50,7 +73,12 @@ export default {
         
     },
     watch: {
-        
+        messages() {
+            this.$nextTick(() => {
+                const box = this.$refs.box
+                box.scrollTo(0, box.scrollHeight);
+            })
+        }
     },
 }
 </script>
@@ -71,13 +99,19 @@ export default {
     .message-box {
         overflow-y: scroll;
     }
+    .message-box-content {
+        padding: 1rem 1rem;
+    }
+    .item {
+        padding: 0;
+    }
     .message {
         position: relative;
-        padding: 0.5rem 20% 0.5rem 4rem;
+        padding: 0.5rem 20% 0.5rem 3rem;
     }
     .image-column {
         position: absolute;
-        left: 1rem;
+        left: 0;
         width: 3rem;
     }
     .message-image {
@@ -101,6 +135,23 @@ export default {
         font-size: 0.8rem;
         background-color: #ddd;
         color: #222;
+    }
+    .line {
+        padding-top: 1rem;
+        margin-bottom: 1rem;
+        width: 100%;
+        height: 1px;
+        border-bottom: 1px solid #aaa
+    }
+    .output {
+        display: inline;
+        padding: 0;
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+    .error {
+        color: #ff4444;
     }
     .input-row-box {
         position: absolute;

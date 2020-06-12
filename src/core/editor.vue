@@ -2,7 +2,7 @@
     <div class="editor fill">
         <div class="editor-container fill" ref="container"></div>
         <div class="tool-box">
-            <button class="tool-button" @click="">
+            <button class="tool-button" @click="() => $emit('run')">
                 코드 실행
             </button>
         </div>
@@ -12,7 +12,6 @@
 import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/meta'
 import 'codemirror/mode/python/python'
-import 'codemirror/mode/javascript/javascript'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/ayu-mirage.css'
 import 'codemirror/keymap/sublime'

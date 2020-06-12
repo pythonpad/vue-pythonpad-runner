@@ -14,6 +14,8 @@
     <div class="app" id="app">
         <chat-runner
             :lesson="lesson"
+            :brython-static-url="brythonStaticUrl"
+            :static-url="staticUrl"
         ></chat-runner>
     </div>
     <script>
@@ -62,7 +64,7 @@
                 catbot: {
                     id: 'catbot',
                     name: '캣봇',
-                    image: '/cat.png',
+                    image: '#{static}/images/cat.png',
                 },
             }
         }
@@ -70,6 +72,8 @@
             el: '#app',
             data: {
                 lesson: lesson,
+                brythonStaticUrl: '/node_modules/brython-runner/static',
+                staticUrl: '/static',
             },
         })
     </script>
