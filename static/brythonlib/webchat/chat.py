@@ -3,8 +3,7 @@ import browser
 def send(text):
     browser.self.sendMsg('send_text', text)
 
-# def receive(*options):
-#     if options:
-#         pass
-#     else:
-#         browser.self
+async def receive():
+    browser.self.sendMsg('receive_text')
+    value = await browser.self.receiveMsg('input.text')
+    return value

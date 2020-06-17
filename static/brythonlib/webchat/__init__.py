@@ -1,5 +1,6 @@
-from .chat import send
+from .chat import send, receive
 
 __all__ = [
-    'send'
+    'send',
+    'receive',
 ]

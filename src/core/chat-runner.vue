@@ -8,6 +8,8 @@
                     :staticUrl="staticUrl"
                     :messages="messages"
                     :agents="lesson ? lesson.agents : {}"
+                    :inputMode="inputMode"
+                    @send-text="text => sendText(text)"
                 ></chat>
             </div>
         </div>
@@ -46,6 +48,7 @@ export default {
             cursor: null,
             messages: [],
             editorCode: this.initSrc,
+            inputMode: null,
         }
     },
     created() {
@@ -60,6 +63,7 @@ export default {
     methods: {
         initRunner() {
             const messages = this.messages
+            const waitTextInput = () => this.inputMode = 'text'
             const options = {
                 codeName: 'main.py', 
                 codeCwd: '.',
@@ -94,6 +98,10 @@ export default {
                                 type: 'output.text',
                                 body: value,
                             })
+                            break
+
+                        case 'receive_text':
+                            waitTextInput()
                             break
                     
                         default:
@@ -164,6 +172,14 @@ export default {
             //     type: 'system',
             //     body: '코드 실행이 종료되었습니다.',
             // })
+        },
+        sendText(text) {
+            this.runner.sendMsg('input.text', text)
+            this.inputMode = null
+            this.messages.push({
+                type: 'input.text',
+                body: text,
+            })
         },
     },
     watch: {
