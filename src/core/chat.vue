@@ -38,6 +38,19 @@
                             :class="{'error': message.outputType == 'stderr'}"
                             :key="i"
                         >{{message.body}}</code>
+                        <div class="message" v-if="message.type == 'output.text'" :key="i">
+                            <div class="image-column">
+                                <img class="message-image" :src="`${staticUrl}/images/python.png`"></img>
+                            </div>
+                            <div class="content-column">
+                                <div class="message-name">
+                                    파이썬
+                                </div>
+                                <div class="message-body">
+                                    {{message.body}}
+                                </div>
+                            </div>
+                        </div>
                     </template>
                 </div>
             </div>

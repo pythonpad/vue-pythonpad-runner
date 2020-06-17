@@ -7,7 +7,7 @@
                 <chat
                     :staticUrl="staticUrl"
                     :messages="messages"
-                    :agents="lesson.agents"
+                    :agents="lesson ? lesson.agents : {}"
                 ></chat>
             </div>
         </div>
@@ -53,7 +53,9 @@ export default {
         this.initRunner()
     },
     mounted() {
-        this.readActions()
+        if (this.lesson) {
+            this.readActions()
+        }
     },
     methods: {
         initRunner() {
@@ -89,8 +91,7 @@ export default {
                     switch (type) {
                         case 'send_text':
                             messages.push({
-                                type: 'message',
-                                agentId: 'python',
+                                type: 'output.text',
                                 body: value,
                             })
                             break
@@ -152,17 +153,17 @@ export default {
                 type: 'system',
                 body: '코드를 실행합니다.',
             })
-            this.messages.push({
-                type: 'line',
-            })
+            // this.messages.push({
+            //     type: 'line',
+            // })
             await this.runner.runCode(this.editorCode)
-            this.messages.push({
-                type: 'line',
-            })
-            this.messages.push({
-                type: 'system',
-                body: '코드 실행이 종료되었습니다.',
-            })
+            // this.messages.push({
+            //     type: 'line',
+            // })
+            // this.messages.push({
+            //     type: 'system',
+            //     body: '코드 실행이 종료되었습니다.',
+            // })
         },
     },
     watch: {
@@ -186,7 +187,8 @@ export default {
         top: 0;
         left: 0;
         width: 100%;
-        height: 50%;
+        /* height: 50%; */
+        height: 0;
         border-bottom: 1px solid #ddd;
     }
     .chat-box {
@@ -194,7 +196,8 @@ export default {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 50%;        
+        /* height: 50%; */
+        height: 100%;
     }
     .right-column {
         float: right;
