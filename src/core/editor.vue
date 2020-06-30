@@ -13,7 +13,8 @@ import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/meta'
 import 'codemirror/mode/python/python'
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/ayu-mirage.css'
+// import 'codemirror/theme/ayu-mirage.css'
+import 'codemirror/theme/nord.css'
 import 'codemirror/addon/comment/comment'
 import 'codemirror/keymap/sublime'
 
@@ -21,7 +22,7 @@ const DEFAULT_OPTIONS = {
     lineNumbers: true,
     lineSeparator: '\n',
     mode: 'python',
-    theme: 'ayu-mirage',
+    theme: 'nord',
     fontSize: 14,
     indentUnit: 4,
     tabSize: 4,
@@ -92,7 +93,7 @@ export default {
 <style scoped>
     .editor {
         position: relative;
-        padding-bottom: 4rem; 
+        padding-bottom: 3rem; 
     }
     .fill {
         width: 100%;
@@ -107,7 +108,7 @@ export default {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 4rem;
+        height: 3rem;
     }
     .tool-button {
         border: 0;

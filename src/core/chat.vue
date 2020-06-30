@@ -117,7 +117,7 @@ export default {
         position: relative;
         margin: 0 auto;
         max-width: 50rem;  
-        padding-bottom: 4rem; 
+        padding-bottom: 3rem; 
     }
     .message-box {
         overflow-y: scroll;
@@ -198,7 +198,7 @@ export default {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 4rem;
+        height: 3rem;
         /* padding: 0.4rem; */
     }
     .input-row-inner-box {
@@ -216,7 +216,7 @@ export default {
     .input {
         border: 0;
         outline: 0;;
-        line-height: 3rem;
+        line-height: 2rem;
         font-size: 1rem;
     }
     .input:disabled {

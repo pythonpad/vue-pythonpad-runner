@@ -1,7 +1,20 @@
 <template>
     <div class="chat-runner">
-        <div class="left-column">
-            <div class="material-box">
+        <div class="editor-column">
+            <div class="column-title-row">
+                Code Editor
+            </div>
+            <div class="editor-box">
+                <editor
+                    :code="editorCode"
+                    @change="handleEditorCodeChange"
+                    @run="() => runEditorCode()"
+                ></editor>
+            </div>
+        </div>
+        <div class="chat-column">
+            <div class="column-title-row">
+                Run
             </div>
             <div class="chat-box">
                 <chat
@@ -11,15 +24,6 @@
                     :inputMode="inputMode"
                     @send-text="text => sendText(text)"
                 ></chat>
-            </div>
-        </div>
-        <div class="right-column">
-            <div class="editor-box">
-                <editor
-                    :code="editorCode"
-                    @change="handleEditorCodeChange"
-                    @run="() => runEditorCode()"
-                ></editor>
             </div>
         </div>
     </div>
@@ -161,17 +165,7 @@ export default {
                 type: 'system',
                 body: '코드를 실행합니다.',
             })
-            // this.messages.push({
-            //     type: 'line',
-            // })
             await this.runner.runCode(this.editorCode)
-            // this.messages.push({
-            //     type: 'line',
-            // })
-            // this.messages.push({
-            //     type: 'system',
-            //     body: '코드 실행이 종료되었습니다.',
-            // })
         },
         sendText(text) {
             this.runner.sendMsg('input.text', text)
@@ -191,35 +185,37 @@ export default {
     .chat-runner {
         width: 100%;
         height: 100%;
+        display: flex;
+        flex-flow: row nowrap;
     }
-    .left-column {
+    .editor-column {
         position: relative;
-        float: left;
-        width: 50%;
+        flex: 1 1 auto;
+        padding-top: 1.5rem;
+        border-right: 1px solid #666;
+    }
+    .chat-box {
+        width: 100%;
         height: 100%;
     }
-    .material-box {
+    .chat-column {
+        position: relative;
+        width: 32rem;
+        max-width: 50%;
+        flex: 0 0 auto;
+        padding-top: 1.5rem;
+    }
+    .column-title-row {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
-        /* height: 50%; */
-        height: 0;
-        border-bottom: 1px solid #ddd;
-    }
-    .chat-box {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        /* height: 50%; */
-        height: 100%;
-    }
-    .right-column {
-        float: right;
-        width: 50%;
-        height: 100%;
-        border-left: 1px solid #ddd;
+        height: 1.5rem;
+        padding: 0 0.5rem;
+        line-height: 1.5rem;
+        font-size: 0.8rem;
+        background-color: #1f2430;
+        color: #ddd;
     }
     .editor-box {
         width: 100%;
