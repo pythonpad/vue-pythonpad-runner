@@ -87,6 +87,12 @@ export default {
             this.inputText = ''
             this.$emit('send-text', text)
         },
+        scrollToBottom() {
+            this.$nextTick(() => {
+                const box = this.$refs.box
+                box.scrollTo(0, box.scrollHeight);
+            })
+        },
     },
     watch: {
         inputMode() {
@@ -97,10 +103,7 @@ export default {
             }
         },
         messages() {
-            this.$nextTick(() => {
-                const box = this.$refs.box
-                box.scrollTo(0, box.scrollHeight);
-            })
+            this.scrollToBottom()
         },
     },
 }

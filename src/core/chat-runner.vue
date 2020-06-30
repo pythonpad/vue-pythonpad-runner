@@ -1,29 +1,40 @@
 <template>
     <div class="chat-runner">
-        <div class="editor-column">
-            <div class="column-title-row">
-                Code Editor
+        <div class="column-tabs">
+            <div class="column-tab" :class="{'active': activeTabId === 'editor'}" @click="() => (activeTabId = 'editor')">
+                코드
             </div>
-            <div class="editor-box">
-                <editor
-                    :code="editorCode"
-                    @change="handleEditorCodeChange"
-                    @run="() => runEditorCode()"
-                ></editor>
+            <div class="column-tab" :class="{'active': activeTabId === 'chat'}" @click="() => (activeTabId = 'chat')">
+                실행 화면
             </div>
         </div>
-        <div class="chat-column">
-            <div class="column-title-row">
-                Run
+        <div class="columns">
+            <div class="column editor-column" :class="{'active': activeTabId === 'editor'}">
+                <div class="column-title-row">
+                    코드 에디터
+                </div>
+                <div class="editor-box">
+                    <editor
+                        :code="editorCode"
+                        @change="handleEditorCodeChange"
+                        @run="() => runEditorCode()"
+                    ></editor>
+                </div>
             </div>
-            <div class="chat-box">
-                <chat
-                    :staticUrl="staticUrl"
-                    :messages="messages"
-                    :agents="lesson ? lesson.agents : {}"
-                    :inputMode="inputMode"
-                    @send-text="text => sendText(text)"
-                ></chat>
+            <div class="column chat-column" :class="{'active': activeTabId === 'chat'}">
+                <div class="column-title-row">
+                    실행
+                </div>
+                <div class="chat-box">
+                    <chat
+                        ref="chat"
+                        :staticUrl="staticUrl"
+                        :messages="messages"
+                        :agents="lesson ? lesson.agents : {}"
+                        :inputMode="inputMode"
+                        @send-text="text => sendText(text)"
+                    ></chat>
+                </div>
             </div>
         </div>
     </div>
@@ -53,6 +64,7 @@ export default {
             messages: [],
             editorCode: this.initSrc,
             inputMode: null,
+            activeTabId: 'editor',
         }
     },
     created() {
@@ -166,6 +178,7 @@ export default {
                 body: '코드를 실행합니다.',
             })
             await this.runner.runCode(this.editorCode)
+            this.activeTabId = 'chat';
         },
         sendText(text) {
             this.runner.sendMsg('input.text', text)
@@ -177,33 +190,60 @@ export default {
         },
     },
     watch: {
-        
+        activeTabId() {
+            this.$refs.chat.scrollToBottom()
+        },
     },
 }
 </script>
 <style scoped>
     .chat-runner {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+    }
+    .column-tabs {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2rem;
+        color: #ddd;
+        display: flex;
+        flex-flow: row nowrap;
+        font-size: 0.8rem;
+    }
+    .column-tab {
+        flex: 0 0 auto;
+        width: 50%;
+        height: 2rem;
+        background-color: #1f2430;
+        line-height: 2rem;
+        text-align: center;
+        opacity: 0.6;
+        cursor: pointer;
+    }
+    .column-tab.active { 
+        opacity: 1;
+    }
+    .columns {
         width: 100%;
         height: 100%;
         display: flex;
         flex-flow: row nowrap;
     }
-    .editor-column {
+    .column {
         position: relative;
-        flex: 1 1 auto;
         padding-top: 1.5rem;
+    }
+    .editor-column {
+        flex: 1 1 auto;
         border-right: 1px solid #666;
     }
-    .chat-box {
-        width: 100%;
-        height: 100%;
-    }
     .chat-column {
-        position: relative;
         width: 32rem;
         max-width: 50%;
         flex: 0 0 auto;
-        padding-top: 1.5rem;
     }
     .column-title-row {
         position: absolute;
@@ -220,5 +260,28 @@ export default {
     .editor-box {
         width: 100%;
         height: 100%;
+    }
+    .chat-box {
+        width: 100%;
+        height: 100%;
+    }
+    @media (max-width: 800px) {
+        .chat-runner {
+            padding-top: 2rem;
+        }
+        .column {
+            padding-top: 0;
+            display: none;
+        }
+        .column.active {
+            display: block;
+        }
+        .column-title-row {
+            display: none;
+        }
+        .chat-column {
+            flex: 1 1 auto;
+            max-width: none;
+        }
     }
 </style>
