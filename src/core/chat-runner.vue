@@ -173,12 +173,12 @@ export default {
             this.$emit('save-src', this.editorCode)
         },
         async runEditorCode() {
+            this.activeTabId = 'chat';
             this.messages.push({
                 type: 'system',
                 body: '코드를 실행합니다.',
             })
             await this.runner.runCode(this.editorCode)
-            this.activeTabId = 'chat';
         },
         sendText(text) {
             this.runner.sendMsg('input.text', text)
