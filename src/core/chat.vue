@@ -53,10 +53,10 @@
             </div>
             <div class="input-row-box">
                 <div class="input-row-inner-box fill">
-                    <div class="input-box fill" :class="{ 'disabled': inputMode !== 'text' }">
-                        <input ref="textInput" class="input fill" type="text" :disabled="inputMode !== 'text'" v-on:keyup.13="sendText" v-model="inputText"></input>
+                    <div class="input-box fill" :class="{ 'disabled': !inputMode }">
+                        <input ref="textInput" class="input fill" type="text" :disabled="!inputMode" v-on:keyup.13="sendText" v-model="inputText"></input>
                     </div>
-                    <button class="send-button" :disabled="inputMode !== 'text'" @click="sendText">
+                    <button class="send-button" :disabled="!inputMode" @click="sendText">
                         보내기
                     </button>
                 </div>

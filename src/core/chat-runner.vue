@@ -64,6 +64,7 @@ export default {
             messages: [],
             editorCode: this.initSrc,
             inputMode: null,
+            sendInput: null,
             activeTabId: 'editor',
         }
     },
@@ -80,6 +81,10 @@ export default {
         initRunner() {
             const messages = this.messages
             const waitTextInput = () => this.inputMode = 'text'
+            const waitRawInput = resolve => {
+                this.inputMode = 'raw'
+                this.sendInput = data => resolve(data)
+            }
             const options = {
                 codeName: 'main.py', 
                 codeCwd: '.',
@@ -106,6 +111,11 @@ export default {
                         })
                     },
                     flush() { },
+                },
+                stdin: {
+                    readline() {
+                        waitRawInput()
+                    },
                 },
                 onMsg(type, value) {
                     switch (type) {
@@ -181,12 +191,18 @@ export default {
             await this.runner.runCode(this.editorCode)
         },
         sendText(text) {
-            this.runner.sendMsg('input.text', text)
-            this.inputMode = null
-            this.messages.push({
-                type: 'input.text',
-                body: text,
-            })
+            if (this.inputMode === 'text') {
+                this.runner.sendMsg('input.text', text)
+                this.inputMode = null
+                this.messages.push({
+                    type: 'input.text',
+                    body: text,
+                })
+            } else if (this.inputMode === 'raw') {
+                this.sendInput(text)
+                this.sendInput = null
+                this.inputMode = null
+            }
         },
     },
     watch: {
