@@ -114,7 +114,9 @@ export default {
                 },
                 stdin: {
                     readline() {
-                        waitRawInput()
+                        return new Promise((resolve, reject) => {
+                            waitRawInput(resolve)
+                        })
                     },
                 },
                 onMsg(type, value) {
