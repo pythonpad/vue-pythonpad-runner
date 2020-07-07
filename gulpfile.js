@@ -58,7 +58,7 @@ gulp.task('run-proxy', () => {
     const app = express();
 
     // Run "Hanger" server for test.
-    
+
     app.use(bodyParser.text());
     app.post('/hanger/open/', (req, res) => {
         res.send('vuepythonpadrunner');
@@ -94,5 +94,5 @@ gulp.task('run-proxy', () => {
     server.listen(proxyPort);
 });
 
-gulp.task('dev', gulp.parallel('run-proxy', 'dev-webpack'));//gulp.series());
+gulp.task('dev', gulp.parallel('run-proxy', 'dev-webpack'));
 gulp.task('build', gulp.parallel('build-webpack'));
