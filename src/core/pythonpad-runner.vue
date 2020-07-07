@@ -248,7 +248,7 @@ export default {
         height: 100%;
     }
     @media (max-width: 800px) {
-        .output-runner {
+        .pythonpad-runner {
             padding-top: 2rem;
         }
         .column {
