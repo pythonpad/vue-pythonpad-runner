@@ -1,6 +1,6 @@
-# Vue Chat Runner
+# Vue Pythonpad Runner
 
-A Vue.js component that supports chat-like interface for programming education.
+A Vue.js component that supports pythonpad compatible Python codes.
 
 ## Development
 
@@ -32,39 +32,39 @@ Remember to build-and-commit when you update the project.
 
 ### Basic usage
 
-The easiest way to use **Vue Chat Runner** is to simply load the bundle script under `./lib` in the distribution. For example:
+The easiest way to use **Vue Pythonpad Runner** is to simply load the bundle script under `./lib` in the distribution. For example:
 
 ```html
-<script src="lib/vue-chat-runner.bundle.js"></script>
+<script src="lib/vue-pythonpad-runner.bundle.js"></script>
 ```
 
-Having this script tag, a Vue Chat Runner component can be used after being registrated like this:
+Having this script tag, a Vue Pythonpad Runner component can be used after being registrated like this:
 
 ```javascript
-Vue.component('chat-runner', VueChatRunner)
+Vue.component('pythonpad-runner', VuePythonpadRunner)
 ```
 
-If you want to use VueChatRunner in CommonJS environment, you can require the VueChatRunner component from `./lib/vue-chat-runner.js`. For example:
+If you want to use VuePythonpadRunner in CommonJS environment, you can require the VuePythonpadRunner component from `./lib/vue-pythonpad-runner.js`. For example:
 
 ```javascript
-var VueChatRunner = require('vue-chat-runner/lib/vue-chat-runner.js').default;
+var VuePythonpadRunner = require('vue-pythonpad-runner/lib/vue-pythonpad-runner.js').default;
 ```
 
 or with `import` syntax, 
 
 ```javascript
-import VueChatRunner from 'vue-chat-runner/lib/vue-chat-runner.js';
+import VuePythonpadRunner from 'vue-pythonpad-runner/lib/vue-pythonpad-runner.js';
 ```
 
 For a working example, run `$ yarn dev` script and check out the example web page. This shows the `./index.html` file rendered on the browser with all dependencies ready.
 
-### VueChatRunner
+### VuePythonpadRunner
 
-`VueChatRunner` component supports the web-based programming lessons specially designed for the component. This allows users to learn how to programming using Python 3 in a very interactive environment created with an instructor bot. 
+`VuePythonpadRunner` component supports the web-based programming lessons specially designed for the component. 
 
 #### Props & Events
 
-Following props and events are available in the `VueChatRunner` component. 
+Following props and events are available in the `VuePythonpadRunner` component. 
 
 **`lesson`**
 

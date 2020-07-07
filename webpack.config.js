@@ -6,7 +6,7 @@ module.exports = mode => ({
     cache: true,
     mode: 'development',
     entry: {
-        'vue-chat-runner.bundle': ['./src/browser.js'],
+        'vue-pythonpad-runner.bundle': ['./src/browser.js'],
     },
     output: {
         path: path.join(__dirname, 'lib'),

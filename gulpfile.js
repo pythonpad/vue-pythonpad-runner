@@ -20,12 +20,6 @@ gulp.task('build-webpack', callback => {
     });
 });
 
-gulp.task('build-babel', () => {
-    return gulp.src(['src/**/*', '!src/browser.js'])
-        .pipe(babel())
-        .pipe(gulp.dest('lib'));
-});
-
 gulp.task('dev-webpack', () => {
     const config = webpackConfig('development');
     DevServer.addDevServerEntrypoints(config, {
@@ -43,5 +37,4 @@ gulp.task('dev-webpack', () => {
 });
 
 gulp.task('dev', gulp.series('dev-webpack'));
-// gulp.task('build', gulp.parallel('build-babel', 'build-webpack'));
 gulp.task('build', gulp.parallel('build-webpack'));

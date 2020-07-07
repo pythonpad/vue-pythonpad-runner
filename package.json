@@ -1,13 +1,13 @@
 {
-  "name": "vue-chat-runner",
+  "name": "vue-pythonpad-runner",
   "version": "0.1.0",
-  "description": "A Vue.js component that supports chat-like interface for programming education.",
+  "description": "A Vue.js component that supports pythonpad codes.",
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/gulp dev",
     "build": "./node_modules/.bin/gulp build"
   },
-  "repository": "git@gitlab.com:intcoding/vue-chat-runner.git",
+  "repository": "git@gitlab.com:intcoding/vue-pythonpad-runner.git",
   "author": "Jeongmin Byun <jmbyun91@gmail.com>",
   "license": "MIT",
   "private": true,

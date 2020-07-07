@@ -4,81 +4,25 @@
 <head>
     <link rel="stylesheet" type="text/css" href="index.css">
     <script src="/node_modules/vue/dist/vue.js"></script>
-    <script src="/assets/vue-chat-runner.bundle.js"></script>
+    <script src="/assets/vue-pythonpad-runner.bundle.js"></script>
     <script>
-        Vue.component('chat-runner', VueChatRunner)
+        Vue.component('pythonpad-runner', VuePythonpadRunner)
     </script>
 </head>
 
 <body>
     <div class="app" id="app">
-        <chat-runner
-            :lesson="lesson"
+        <pythonpad-runner
             :brython-static-url="brythonStaticUrl"
             :static-url="staticUrl"
             :init-src="code"
             @save-src="code => saveCode(code)"
-        ></chat-runner>
+        ></pythonpad-runner>
     </div>
     <script>
-        var lesson = {
-            startActionId: 'a1',
-            actions: {
-                a1: {
-                    id: 'a1',
-                    type: 'message',
-                    agentId: 'catbot',
-                    body: '안녕하세요',
-                    nextId: 'a2',
-                },
-                a2: {
-                    id: 'a2',
-                    type: 'message',
-                    agentId: 'catbot',
-                    body: '마이크테스트 하나 둘 셋 하나 둘셋',
-                    nextId: 'a3',
-                },
-                a3: {
-                    id: 'a3',
-                    type: 'message',
-                    agentId: 'catbot',
-                    body: '메시지는 잘 보이시나요',
-                    nextId: 'a4',
-                },
-                a4: {
-                    id: 'a4',
-                    type: 'pause',
-                    nextId: 'a5',
-                },
-                a5: {
-                    id: 'a5',
-                    type: 'message',
-                    agentId: 'catbot',
-                    body: '그럼 잘 보이시는걸로.',
-                    nextId: 'a6',
-                },
-                a6: {
-                    id: 'a6',
-                    type: 'exit',
-                },
-            },
-            agents: {
-                catbot: {
-                    id: 'catbot',
-                    name: '캣봇',
-                    image: '#{static}/images/cat.png',
-                },
-                python: {
-                    id: 'python',
-                    name: '파이썬',
-                    image: '#{static}/images/python.png',
-                }
-            }
-        }
         new Vue({
             el: '#app',
             data: {
-                lesson: lesson,
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
                 code: localStorage.getItem('saved-code') || '',

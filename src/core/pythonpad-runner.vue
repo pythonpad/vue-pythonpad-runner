@@ -1,10 +1,10 @@
 <template>
-    <div class="chat-runner">
+    <div class="pythonpad-runner">
         <div class="column-tabs">
             <div class="column-tab" :class="{'active': activeTabId === 'editor'}" @click="() => (activeTabId = 'editor')">
                 코드
             </div>
-            <div class="column-tab" :class="{'active': activeTabId === 'chat'}" @click="() => (activeTabId = 'chat')">
+            <div class="column-tab" :class="{'active': activeTabId === 'output'}" @click="() => (activeTabId = 'output')">
                 실행 화면
             </div>
         </div>
@@ -21,19 +21,19 @@
                     ></editor>
                 </div>
             </div>
-            <div class="column chat-column" :class="{'active': activeTabId === 'chat'}">
+            <div class="column output-column" :class="{'active': activeTabId === 'output'}">
                 <div class="column-title-row">
                     실행
                 </div>
-                <div class="chat-box">
-                    <chat
-                        ref="chat"
+                <div class="output-box">
+                    <console
+                        ref="console"
                         :staticUrl="staticUrl"
                         :messages="messages"
                         :agents="lesson ? lesson.agents : {}"
                         :inputMode="inputMode"
                         @send-text="text => sendText(text)"
-                    ></chat>
+                    ></console>
                 </div>
             </div>
         </div>
@@ -42,12 +42,12 @@
 <script>
 import { throttle } from 'throttle-debounce'
 import BrythonRunner from 'brython-runner/lib/brython-runner.js'
-import Chat from './chat'
+import Console from './console'
 import Editor from './editor'
 import './common.css'
 
 export default {
-    name: 'chat-runner',
+    name: 'pythonpad-runner',
     props: [
         'lesson',
         'brythonStaticUrl',
@@ -55,13 +55,17 @@ export default {
         'initSrc'
     ],
     components: {
-        Chat,
+        Console,
         Editor,
     },
     data() {
         return {
-            cursor: null,
-            messages: [],
+            messages: [
+                {
+                    type: 'system',
+                    body: '코드를 실행해주세요.\n',
+                },
+            ],
             editorCode: this.initSrc,
             inputMode: null,
             sendInput: null,
@@ -73,13 +77,11 @@ export default {
         this.initRunner()
     },
     mounted() {
-        if (this.lesson) {
-            this.readActions()
-        }
+        
     },
     methods: {
         initRunner() {
-            const messages = this.messages
+            const pushMessage = el => this.messages.push(el)
             const waitTextInput = () => this.inputMode = 'text'
             const waitRawInput = resolve => {
                 this.inputMode = 'raw'
@@ -94,7 +96,7 @@ export default {
                 ],
                 stdout: {
                     write(content) {
-                        messages.push({
+                        pushMessage({
                             type: 'output',
                             outputType: 'stdout',
                             body: content,
@@ -104,7 +106,7 @@ export default {
                 },
                 stderr: {
                     write(content) {
-                        messages.push({
+                        pushMessage({
                             type: 'output',
                             outputType: 'stderr',
                             body: content,
@@ -114,68 +116,17 @@ export default {
                 },
                 stdin: {
                     readline() {
-                        return new Promise((resolve, reject) => {
-                            waitRawInput(resolve)
-                        })
+                        return new Promise((resolve, reject) => waitRawInput(resolve))
                     },
                 },
                 onMsg(type, value) {
                     switch (type) {
-                        case 'send_text':
-                            messages.push({
-                                type: 'output.text',
-                                body: value,
-                            })
-                            break
-
-                        case 'receive_text':
-                            waitTextInput()
-                            break
-                    
                         default:
                             break
                     }
                 }
             }
             this.runner = new BrythonRunner(options)
-        },
-        readActions() {
-            this.cursor = this.lesson.startActionId
-            this.readAction()
-        },
-        readAction() {
-            const action = this.lesson.actions[this.cursor]
-            switch (action.type) {
-                case 'message':
-                    this.handleMessage(action)
-                    break
-
-                case 'pause':
-                    this.handlePause(action)
-                    break
-
-                case 'exit':
-                    this.handleExit(action)
-                    break
-            
-                default:
-                    break
-            }
-        },
-        handleMessage(action) {
-            this.messages.push({
-                type: 'message',
-                agentId: action.agentId,
-                body: action.body,
-            })
-            this.cursor = action.nextId
-            setTimeout(() => this.readAction(), 500)
-        },
-        handlePause(action) {
-
-        },
-        handleExit(action) {
-
         },
         handleEditorCodeChange(code) {
             this.editorCode = code
@@ -185,22 +136,20 @@ export default {
             this.$emit('save-src', this.editorCode)
         },
         async runEditorCode() {
-            this.activeTabId = 'chat';
+            this.messages = []
+            this.activeTabId = 'output';
             this.messages.push({
                 type: 'system',
-                body: '코드를 실행합니다.',
+                body: '코드를 실행합니다.\n',
             })
             await this.runner.runCode(this.editorCode)
+            this.messages.push({
+                type: 'system',
+                body: '코드 실행이 종료되었습니다.\n',
+            })
         },
         sendText(text) {
-            if (this.inputMode === 'text') {
-                this.runner.sendMsg('input.text', text)
-                this.inputMode = null
-                this.messages.push({
-                    type: 'input.text',
-                    body: text,
-                })
-            } else if (this.inputMode === 'raw') {
+            if (this.inputMode === 'raw') {
                 this.sendInput(text)
                 this.sendInput = null
                 this.inputMode = null
@@ -209,13 +158,13 @@ export default {
     },
     watch: {
         activeTabId() {
-            this.$refs.chat.scrollToBottom()
+            this.$refs.console.scrollToBottom()
         },
     },
 }
 </script>
 <style scoped>
-    .chat-runner {
+    .pythonpad-runner {
         box-sizing: border-box;
         width: 100%;
         height: 100%;
@@ -258,7 +207,7 @@ export default {
         flex: 1 1 auto;
         border-right: 1px solid #666;
     }
-    .chat-column {
+    .output-column {
         width: 32rem;
         max-width: 50%;
         flex: 0 0 auto;
@@ -279,12 +228,12 @@ export default {
         width: 100%;
         height: 100%;
     }
-    .chat-box {
+    .output-box {
         width: 100%;
         height: 100%;
     }
     @media (max-width: 800px) {
-        .chat-runner {
+        .output-runner {
             padding-top: 2rem;
         }
         .column {
@@ -297,7 +246,7 @@ export default {
         .column-title-row {
             display: none;
         }
-        .chat-column {
+        .output-column {
             flex: 1 1 auto;
             max-width: none;
         }
