@@ -12,13 +12,18 @@
                     <template v-for="(message, i) in visibleMessages">
                         <span 
                             v-if="message.type == 'system'"
-                            class="output system"  
+                            class="console-text system"  
                             :key="i"
                         >{{message.body}}</span>
                         <span 
-                            v-if="message.type == 'output'"
-                            class="output"  
+                            v-else-if="message.type == 'output'"
+                            class="console-text"  
                             :class="{'error': message.outputType == 'stderr'}"
+                            :key="i"
+                        >{{message.body}}</span>
+                        <span 
+                            v-else-if="message.type == 'input'"
+                            class="console-text user-input"  
                             :key="i"
                         >{{message.body}}</span>
                     </template>
@@ -116,7 +121,7 @@ export default {
         margin: 0;
         font-family: monospace;
     }
-    .output {
+    .console-text {
         display: inline;
         padding: 0;
         margin: 0;
@@ -129,6 +134,9 @@ export default {
     }
     .system {
         color: #1dbcd1;
+    }
+    .user-input {
+        color: #ffcc00;
     }
     .input-row-box {
         position: absolute;

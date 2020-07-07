@@ -166,6 +166,10 @@ export default {
         sendText(text) {
             if (this.inputMode === 'raw') {
                 this.sendInput(text)
+                this.messages.push({
+                    type: 'input',
+                    body: `${text}\n`,
+                })
                 this.sendInput = null
                 this.inputMode = null
             }
