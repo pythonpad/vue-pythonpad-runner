@@ -139,6 +139,9 @@ export default {
             this.$emit('save-src', this.editorCode)
         },
         async runEditorCode() {
+            if (this.editorCode.trim() === '') {
+                return;
+            }
             this.messages = []
             this.activeTabId = 'output';
             this.messages.push({
