@@ -3,7 +3,13 @@
         <div class="output-container fill">
             <div class="message-box fill" ref="box">
                 <div class="message-box-content">
-                    <template v-for="(message, i) in messages">
+                    <div 
+                        v-if="messages.length > 2000"
+                        class="info system"  
+                    >
+                        동시에 최대 2,000개의 출력물만 표시됩니다.
+                    </div>
+                    <template v-for="(message, i) in visibleMessages">
                         <span 
                             v-if="message.type == 'system'"
                             class="output system"  
@@ -73,6 +79,15 @@ export default {
             this.scrollToBottom()
         },
     },
+    computed: {
+        visibleMessages() {
+            if (this.messages.length > 2000) {
+                return this.messages.slice(-2000)
+            } else {
+                return this.messages
+            }
+        }
+    }
 }
 </script>
 <style scoped>
@@ -95,6 +110,11 @@ export default {
     }
     .message-box-content {
         padding: 1rem 1rem;
+    }
+    .info {
+        padding: 0;
+        margin: 0;
+        font-family: monospace;
     }
     .output {
         display: inline;

@@ -2,8 +2,11 @@
     <div class="editor fill">
         <div class="editor-container fill" ref="container"></div>
         <div class="tool-box">
-            <button class="tool-button" @click="() => $emit('run')">
+            <button v-if="!isRunning" class="tool-button" @click="() => $emit('run')">
                 코드 실행
+            </button>
+            <button v-else class="tool-button warning" @click="() => $emit('stop')">
+                실행 중지
             </button>
         </div>
     </div>
@@ -54,6 +57,7 @@ export default {
     name: 'editor',
     props: [
         'code',
+        'isRunning',
     ],
     data() {
         return {
@@ -122,6 +126,9 @@ export default {
         font-size: 1rem;
         outline: 0;
         cursor: pointer;
+    }
+    .tool-button.warning {
+        background-color: #b88b03;
     }
     .tool-button:hover {
         opacity: 0.8

@@ -16,8 +16,10 @@
                 <div class="editor-box">
                     <editor
                         :code="editorCode"
+                        :isRunning="isRunning"
                         @change="handleEditorCodeChange"
                         @run="() => runEditorCode()"
+                        @stop="() => stopRunning()"
                     ></editor>
                 </div>
             </div>
@@ -70,6 +72,7 @@ export default {
             inputMode: null,
             sendInput: null,
             activeTabId: 'editor',
+            isRunning: false,
         }
     },
     created() {
@@ -142,10 +145,22 @@ export default {
                 type: 'system',
                 body: '코드를 실행합니다.\n',
             })
+            this.isRunning = true
             await this.runner.runCode(this.editorCode)
+            this.isRunning = false
             this.messages.push({
                 type: 'system',
                 body: '코드 실행이 종료되었습니다.\n',
+            })
+        },
+        stopRunning() {
+            this.runner.stopRunning()
+            this.sendInput = null
+            this.inputMode = null
+            this.isRunning = false
+            this.messages.push({
+                type: 'system',
+                body: '코드 실행이 중단되었습니다.\n',
             })
         },
         sendText(text) {

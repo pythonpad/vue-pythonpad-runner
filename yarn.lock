@@ -1542,7 +1542,7 @@ browserslist@^4.12.0, browserslist@^4.8.5:
 
 "brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git":
   version "1.0.0"
-  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#3f5cc147867d1991e9c551fba5c17f88a50f43ff"
+  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#1d289f30a4551ef801949f80e4a890284c8c9083"
 
 buffer-equal@^1.0.0:
   version "1.0.0"
