@@ -58,6 +58,7 @@ gulp.task('run-proxy', () => {
     const app = express();
 
     // Run "Hanger" server for test.
+    
     app.use(bodyParser.text());
     app.post('/hanger/open/', (req, res) => {
         res.send('vuepythonpadrunner');
@@ -78,6 +79,11 @@ gulp.task('run-proxy', () => {
             }
         };
         respond();
+    });
+
+    app.get('/hanger/sleep/', (req, res) => {
+        const duration = req.query.duration;
+        setTimeout(() => res.send(duration), duration * 1000);
     });
 
     app.all('/*', (req, res) => {
