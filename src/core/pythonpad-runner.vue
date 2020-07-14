@@ -148,12 +148,19 @@ export default {
             this.messages = []
             this.activeTabId = 'output';
             this.isRunning = true
-            await this.runner.runCode(this.editorCode)
+            const exit = await this.runner.runCode(this.editorCode)
             this.isRunning = false
-            this.messages.push({
-                type: 'system',
-                body: this.gettext('msg.codeRunDone') + '\n',
-            })
+            if (exit === 0) {
+                this.messages.push({
+                    type: 'system',
+                    body: this.gettext('msg.codeRunDone') + '\n',
+                })
+            } else {
+                this.messages.push({
+                    type: 'system',
+                    body: this.gettext('msg.errorOnRunning') + '\n',
+                })
+            }
         },
         stopRunning() {
             this.runner.stopRunning()

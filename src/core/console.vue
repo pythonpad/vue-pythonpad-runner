@@ -133,6 +133,7 @@ export default {
         color: #ff4444;
     }
     .system {
+        display: block;
         color: #1dbcd1;
     }
     .user-input {
