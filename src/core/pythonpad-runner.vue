@@ -2,19 +2,20 @@
     <div class="pythonpad-runner">
         <div class="column-tabs">
             <div class="column-tab" :class="{'active': activeTabId === 'editor'}" @click="() => (activeTabId = 'editor')">
-                코드
+                {{ gettext('code') }}
             </div>
             <div class="column-tab" :class="{'active': activeTabId === 'output'}" @click="() => (activeTabId = 'output')">
-                실행 화면
+                {{ gettext('runScreen') }}
             </div>
         </div>
         <div class="columns">
             <div class="column editor-column" :class="{'active': activeTabId === 'editor'}">
                 <div class="column-title-row">
-                    코드 에디터
+                    {{ gettext('codeEditor') }}
                 </div>
                 <div class="editor-box">
                     <editor
+                        :gettext="gettext"
                         :code="editorCode"
                         :isRunning="isRunning"
                         @change="handleEditorCodeChange"
@@ -25,14 +26,14 @@
             </div>
             <div class="column output-column" :class="{'active': activeTabId === 'output'}">
                 <div class="column-title-row">
-                    실행
+                    {{ gettext('run') }}
                 </div>
                 <div class="output-box">
                     <console
                         ref="console"
+                        :gettext="gettext"
                         :staticUrl="staticUrl"
                         :messages="messages"
-                        :agents="lesson ? lesson.agents : {}"
                         :inputMode="inputMode"
                         @send-text="text => sendText(text)"
                     ></console>
@@ -46,12 +47,13 @@ import { throttle } from 'throttle-debounce'
 import BrythonRunner from 'brython-runner/lib/brython-runner.js'
 import Console from './console'
 import Editor from './editor'
+import Phrase from '../i18n/phrase'
 import './common.css'
 
 export default {
     name: 'pythonpad-runner',
     props: [
-        'lesson',
+        'locale',
         'brythonStaticUrl',
         'staticUrl',
         'initSrc'
@@ -62,21 +64,22 @@ export default {
     },
     data() {
         return {
-            messages: [
-                {
-                    type: 'system',
-                    body: '코드를 실행해주세요.\n',
-                },
-            ],
+            messages: [],
             editorCode: this.initSrc,
             inputMode: null,
             sendInput: null,
             activeTabId: 'editor',
             isRunning: false,
+            gettext: () => '',
         }
     },
     created() {
+        this.gettext = (new Phrase(this.locale)).load()
         this.saveEditorCodeTh = throttle(1000, this.saveEditorCode)
+        this.messages.push({
+            type: 'system',
+            body: this.gettext('msg.noOutput') + '\n',
+        })
         this.initRunner()
     },
     mounted() {
@@ -144,16 +147,12 @@ export default {
             }
             this.messages = []
             this.activeTabId = 'output';
-            this.messages.push({
-                type: 'system',
-                body: '코드를 실행합니다.\n',
-            })
             this.isRunning = true
             await this.runner.runCode(this.editorCode)
             this.isRunning = false
             this.messages.push({
                 type: 'system',
-                body: '코드 실행이 종료되었습니다.\n',
+                body: this.gettext('msg.codeRunDone') + '\n',
             })
         },
         stopRunning() {
@@ -163,7 +162,7 @@ export default {
             this.isRunning = false
             this.messages.push({
                 type: 'system',
-                body: '코드 실행이 중단되었습니다.\n',
+                body: this.gettext('msg.codeRunStopped') + '\n',
             })
         },
         sendText(text) {

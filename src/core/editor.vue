@@ -3,10 +3,10 @@
         <div class="editor-container fill" ref="container"></div>
         <div class="tool-box">
             <button v-if="!isRunning" class="tool-button" @click="() => $emit('run')">
-                코드 실행
+                {{ gettext('runCode') }}
             </button>
             <button v-else class="tool-button warning" @click="() => $emit('stop')">
-                실행 중지
+                {{ gettext('stopRunning') }}
             </button>
         </div>
     </div>
@@ -56,6 +56,7 @@ const DEFAULT_OPTIONS = {
 export default {
     name: 'editor',
     props: [
+        'gettext',
         'code',
         'isRunning',
     ],

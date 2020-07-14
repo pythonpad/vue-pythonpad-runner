@@ -13,6 +13,7 @@
 <body>
     <div class="app" id="app">
         <pythonpad-runner
+            :locale="locale"
             :brython-static-url="brythonStaticUrl"
             :static-url="staticUrl"
             :init-src="code"
@@ -23,6 +24,7 @@
         new Vue({
             el: '#app',
             data: {
+                locale: 'ko',
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
                 code: localStorage.getItem('saved-code') || '',

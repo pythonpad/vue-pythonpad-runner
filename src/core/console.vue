@@ -7,7 +7,7 @@
                         v-if="messages.length > 2000"
                         class="info system"  
                     >
-                        동시에 최대 2,000개의 출력물만 표시됩니다.
+                        {{ gettext('msg.outputCountLimited', { smartCount: 2000 }) }}
                     </div>
                     <template v-for="(message, i) in visibleMessages">
                         <span 
@@ -35,7 +35,7 @@
                         <input ref="textInput" class="input fill" type="text" :disabled="!inputMode" v-on:keyup.13="sendText" v-model="inputText"></input>
                     </div>
                     <button class="send-button" :disabled="!inputMode" @click="sendText">
-                        보내기
+                        {{ gettext('send') }}
                     </button>
                 </div>
             </div>
@@ -46,8 +46,8 @@
 export default {
     name: 'console',
     props: [
+        'gettext',
         'staticUrl',
-        'agents',
         'messages',
         'inputMode'
     ],
