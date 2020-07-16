@@ -1,14 +1,14 @@
 <template>
     <div class="editor fill">
         <div class="editor-container fill" ref="container"></div>
-        <div class="tool-box">
+        <!-- <div class="tool-box">
             <button v-if="!isRunning" class="tool-button" @click="() => $emit('run')">
                 {{ gettext('runCode') }}
             </button>
             <button v-else class="tool-button warning" @click="() => $emit('stop')">
                 {{ gettext('stopRunning') }}
             </button>
-        </div>
+        </div> -->
     </div>
 </template>
 <script>
@@ -98,7 +98,7 @@ export default {
 <style scoped>
     .editor {
         position: relative;
-        padding-bottom: 3rem; 
+        /* padding-bottom: 3rem;  */
     }
     .fill {
         width: 100%;
@@ -108,7 +108,7 @@ export default {
         width: 100%;
         height: 100%;
     }
-    .tool-box {
+    /* .tool-box {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -133,5 +133,5 @@ export default {
     }
     .tool-button:hover {
         opacity: 0.8
-    }
+    } */
 </style>

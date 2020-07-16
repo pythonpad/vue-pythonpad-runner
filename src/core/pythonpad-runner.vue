@@ -1,33 +1,37 @@
 <template>
     <div class="pythonpad-runner">
-        <div class="column-tabs">
+        <div class="toolbar-box">
+            <toolbar
+                :gettext="gettext"
+                :isRunning="isRunning"
+                @run="() => runEditorCode()"
+                @stop="() => stopRunning()"
+                @save="() => $emit('save')"
+                @share="() => $emit('share')"
+                @reset="() => $emit('reset')"
+                @open-file-view="() => (isFileViewOpen = true)"
+                @close-file-view="() => (isFileViewOpen = false)"
+            ></toolbar>
+        </div>
+        <!-- <div class="column-tabs">
             <div class="column-tab" :class="{'active': activeTabId === 'editor'}" @click="() => (activeTabId = 'editor')">
                 {{ gettext('code') }}
             </div>
             <div class="column-tab" :class="{'active': activeTabId === 'output'}" @click="() => (activeTabId = 'output')">
                 {{ gettext('runScreen') }}
             </div>
-        </div>
+        </div> -->
         <div class="columns">
             <div class="column editor-column" :class="{'active': activeTabId === 'editor'}">
-                <div class="column-title-row">
-                    {{ gettext('codeEditor') }}
-                </div>
                 <div class="editor-box">
                     <editor
                         :gettext="gettext"
                         :code="editorCode"
-                        :isRunning="isRunning"
                         @change="handleEditorCodeChange"
-                        @run="() => runEditorCode()"
-                        @stop="() => stopRunning()"
                     ></editor>
                 </div>
             </div>
             <div class="column output-column" :class="{'active': activeTabId === 'output'}">
-                <div class="column-title-row">
-                    {{ gettext('run') }}
-                </div>
                 <div class="output-box">
                     <console
                         ref="console"
@@ -47,6 +51,7 @@ import { throttle } from 'throttle-debounce'
 import BrythonRunner from 'brython-runner/lib/brython-runner.js'
 import Console from './console'
 import Editor from './editor'
+import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import './common.css'
 
@@ -61,6 +66,7 @@ export default {
     components: {
         Console,
         Editor,
+        Toolbar,
     },
     data() {
         return {
@@ -70,6 +76,7 @@ export default {
             sendInput: null,
             activeTabId: 'editor',
             isRunning: false,
+            isFileViewOpen: false,
             gettext: () => '',
         }
     },
@@ -194,8 +201,17 @@ export default {
 <style scoped>
     .pythonpad-runner {
         box-sizing: border-box;
+        position: relative;
         width: 100%;
         height: 100%;
+        padding-bottom: 2.5rem;
+    }
+    .toolbar-box {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2.5rem;
     }
     .column-tabs {
         position: absolute;
@@ -229,28 +245,14 @@ export default {
     }
     .column {
         position: relative;
-        padding-top: 1.5rem;
     }
     .editor-column {
         flex: 1 1 auto;
-        border-right: 1px solid #666;
     }
     .output-column {
         width: 32rem;
         max-width: 50%;
         flex: 0 0 auto;
-    }
-    .column-title-row {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 1.5rem;
-        padding: 0 0.5rem;
-        line-height: 1.5rem;
-        font-size: 0.8rem;
-        background-color: #1f2430;
-        color: #ddd;
     }
     .editor-box {
         width: 100%;
@@ -261,18 +263,11 @@ export default {
         height: 100%;
     }
     @media (max-width: 800px) {
-        .pythonpad-runner {
-            padding-top: 2rem;
-        }
         .column {
-            padding-top: 0;
             display: none;
         }
         .column.active {
             display: block;
-        }
-        .column-title-row {
-            display: none;
         }
         .output-column {
             flex: 1 1 auto;
