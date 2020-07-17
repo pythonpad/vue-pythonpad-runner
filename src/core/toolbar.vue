@@ -35,13 +35,16 @@
             </div>
         </div>
         <div class="toolbar-side">
-            <div class="toolbar-group">
+            <div 
+                class="toolbar-group"
+                v-if="['basic', 'editor'].includes(viewMode)"
+            >
                 <button 
                     v-if="isFileViewOpen"
                     class="tool-button is-active"
                     @click="() => $emit('close-file-view')"
                 >
-                    <i class="fa fa-folder"></i>
+                    <i class="fa fa-folder-open"></i>
                     {{ gettext('files') }}
                 </button>
                 <button 
@@ -49,20 +52,32 @@
                     class="tool-button"
                     @click="() => $emit('open-file-view')"
                 >
-                    <i class="fa fa-folder-open"></i>
+                    <i class="fa fa-folder"></i>
                     {{ gettext('files') }}
                 </button>
             </div>
             <div class="toolbar-group">
-                <button class="tool-button">
+                <button 
+                    class="tool-button"
+                    :class="{'is-active': viewMode === 'basic'}"
+                    @click="() => $emit('set-view-mode', 'basic')"
+                >
                     <i class="fa fa-columns"></i>
                     {{ gettext('basicView') }}
                 </button>
-                <button class="tool-button">
+                <button 
+                    class="tool-button"
+                    :class="{'is-active': viewMode === 'editor'}"
+                    @click="() => $emit('set-view-mode', 'editor')"
+                >
                     <i class="fa fa-code"></i>
                     {{ gettext('editorView') }}
                 </button>
-                <button class="tool-button">
+                <button 
+                    class="tool-button"
+                    :class="{'is-active': viewMode === 'run'}"
+                    @click="() => $emit('set-view-mode', 'run')"
+                >
                     <i class="fa fa-terminal"></i>
                     {{ gettext('runView') }}
                 </button>
@@ -77,6 +92,7 @@ export default {
         'gettext',
         'isRunning',
         'isFileViewOpen',
+        'viewMode',
     ],
 }
 </script>

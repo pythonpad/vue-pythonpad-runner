@@ -107,8 +107,7 @@ export default {
     .output-container {
         position: relative;
         margin: 0 auto;
-        max-width: 50rem;  
-        padding-bottom: 3rem; 
+        padding-bottom: 2.5rem; 
     }
     .message-box {
         overflow-y: scroll;
@@ -144,7 +143,7 @@ export default {
         bottom: 0;
         left: 0;
         width: 100%;
-        height: 3rem;
+        height: 2.5rem;
         /* padding: 0.4rem; */
     }
     .input-row-inner-box {
@@ -163,7 +162,7 @@ export default {
         border: 0;
         outline: 0;;
         line-height: 2rem;
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
     .input:disabled {
         background-color: #ddd;
@@ -178,7 +177,7 @@ export default {
         width: 5rem;
         height: 100%;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.8rem;
         outline: 0;
         cursor: pointer;
     }

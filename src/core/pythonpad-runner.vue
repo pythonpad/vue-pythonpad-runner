@@ -4,6 +4,8 @@
             <toolbar
                 :gettext="gettext"
                 :isRunning="isRunning"
+                :viewMode="viewMode"
+                :isFileViewOpen="isFileViewOpen"
                 @run="() => runEditorCode()"
                 @stop="() => stopRunning()"
                 @save="() => $emit('save')"
@@ -11,28 +13,53 @@
                 @reset="() => $emit('reset')"
                 @open-file-view="() => (isFileViewOpen = true)"
                 @close-file-view="() => (isFileViewOpen = false)"
+                @set-view-mode="viewMode => setViewMode(viewMode)"
             ></toolbar>
         </div>
-        <!-- <div class="column-tabs">
-            <div class="column-tab" :class="{'active': activeTabId === 'editor'}" @click="() => (activeTabId = 'editor')">
-                {{ gettext('code') }}
-            </div>
-            <div class="column-tab" :class="{'active': activeTabId === 'output'}" @click="() => (activeTabId = 'output')">
-                {{ gettext('runScreen') }}
-            </div>
-        </div> -->
         <div class="columns">
-            <div class="column editor-column" :class="{'active': activeTabId === 'editor'}">
-                <div class="editor-box">
-                    <editor
-                        :gettext="gettext"
-                        :code="editorCode"
-                        @change="handleEditorCodeChange"
-                    ></editor>
+            <div class="column full-column editor-column" :class="`${viewMode}-mode`">
+                <div class="editor-columns">
+                    <div 
+                        class="column file-browser-column" 
+                        :class="{'is-hidden': !isFileViewOpen}"
+                    >
+                        <div class="fill-parent">
+                            <file-browser
+                                :gettext="gettext"
+                                :files="files"
+                                :activeFileKey="activeFileKey"
+                                @active-file-key-change="fileKey => handleFileKeyChange(fileKey)"
+                            ></file-browser>
+                        </div>
+                    </div>
+                    <div class="column full-column editor-column">
+                        <div 
+                            class="fill-parent"
+                            :class="{'is-hidden': activeFileKey !== 'main.py' }"
+                        >
+                            <editor
+                                :gettext="gettext"
+                                :code="editorCode"
+                                :filename="`main.py`"
+                                @change="handleEditorCodeChange"
+                            ></editor>
+                        </div>
+                        <div 
+                            class="fill-parent"
+                            v-if="isTextFileVisible"
+                        >
+                            <editor
+                                :gettext="gettext"
+                                :code="files[activeFileKey].body"
+                                :filename="activeFileKey"
+                                @change="body => handleTextFileChange(activeFileKey, body)"
+                            ></editor>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="column output-column" :class="{'active': activeTabId === 'output'}">
-                <div class="output-box">
+            <div class="column output-column" :class="`${viewMode}-mode`">
+                <div class="fill-parent">
                     <console
                         ref="console"
                         :gettext="gettext"
@@ -51,6 +78,7 @@ import { throttle } from 'throttle-debounce'
 import BrythonRunner from 'brython-runner/lib/brython-runner.js'
 import Console from './console'
 import Editor from './editor'
+import FileBrowser from './file-browser'
 import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import './common.css'
@@ -61,28 +89,33 @@ export default {
         'locale',
         'brythonStaticUrl',
         'staticUrl',
-        'initSrc'
+        'initSrc',
+        'initFiles',
     ],
     components: {
         Console,
         Editor,
+        FileBrowser,
         Toolbar,
     },
     data() {
         return {
             messages: [],
             editorCode: this.initSrc,
+            files: this.initFiles,
             inputMode: null,
             sendInput: null,
-            activeTabId: 'editor',
+            activeFileKey: 'main.py',
+            isCodeSaved: true,
+            isFilesSaved: true,
             isRunning: false,
             isFileViewOpen: false,
+            viewMode: 'basic',
             gettext: () => '',
         }
     },
     created() {
         this.gettext = (new Phrase(this.locale)).load()
-        this.saveEditorCodeTh = throttle(1000, this.saveEditorCode)
         this.messages.push({
             type: 'system',
             body: this.gettext('msg.noOutput') + '\n',
@@ -143,10 +176,22 @@ export default {
         },
         handleEditorCodeChange(code) {
             this.editorCode = code
-            this.saveEditorCodeTh()
+            this.isCodeSaved = false
+            this.$emit('edit-code', this.editorCode)
         },
-        saveEditorCode() {
-            this.$emit('save-src', this.editorCode)
+        handleTextFileChange(fileKey, body) {
+            Vue.set(this.files, fileKey, {
+                type: 'text',
+                body: body,
+            });
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
+        handleFileKeyChange(fileKey) {
+            this.activeFileKey = fileKey
+        },
+        setViewMode(viewMode) {
+            this.viewMode = viewMode
         },
         async runEditorCode() {
             if (this.editorCode.trim() === '') {
@@ -192,9 +237,19 @@ export default {
         },
     },
     watch: {
-        activeTabId() {
-            this.$refs.console.scrollToBottom()
+        viewMode(value, oldValue) {
+            if (oldValue === 'editor' && value !== 'editor') {
+                this.$refs.console.scrollToBottom()
+            }
         },
+    },
+    computed: {
+        isTextFileVisible() {
+            return (
+                this.activeFileKey !== 'main.py' &&
+                this.files[this.activeFileKey].type === 'text'
+            )
+        }
     },
 }
 </script>
@@ -213,31 +268,13 @@ export default {
         width: 100%;
         height: 2.5rem;
     }
-    .column-tabs {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .columns {
         width: 100%;
-        height: 2rem;
-        color: #ddd;
+        height: 100%;
         display: flex;
         flex-flow: row nowrap;
-        font-size: 0.8rem;
     }
-    .column-tab {
-        flex: 0 0 auto;
-        width: 50%;
-        height: 2rem;
-        background-color: #1f2430;
-        line-height: 2rem;
-        text-align: center;
-        opacity: 0.6;
-        cursor: pointer;
-    }
-    .column-tab.active { 
-        opacity: 1;
-    }
-    .columns {
+    .editor-columns {
         width: 100%;
         height: 100%;
         display: flex;
@@ -246,29 +283,40 @@ export default {
     .column {
         position: relative;
     }
-    .editor-column {
+    .file-browser-column {
+        width: 16rem;
+        max-width: 50%;
+        flex: 0 0 auto;
+    }
+    .full-column {
         flex: 1 1 auto;
+    }
+    .editor-column {
+        
+    }
+    .editor-column.run-mode {
+        display: none;
     }
     .output-column {
         width: 32rem;
         max-width: 50%;
         flex: 0 0 auto;
     }
-    .editor-box {
+    .output-column.run-mode {
+        flex: 1 1 auto;
+        max-width: none;
+    }
+    .output-column.editor-mode {
+        display: none;
+    }
+    .fill-parent {
         width: 100%;
         height: 100%;
     }
-    .output-box {
-        width: 100%;
-        height: 100%;
+    .is-hidden {
+        display: none;
     }
     @media (max-width: 800px) {
-        .column {
-            display: none;
-        }
-        .column.active {
-            display: block;
-        }
         .output-column {
             flex: 1 1 auto;
             max-width: none;

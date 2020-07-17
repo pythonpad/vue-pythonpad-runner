@@ -18,6 +18,7 @@
             :brython-static-url="brythonStaticUrl"
             :static-url="staticUrl"
             :init-src="code"
+            :init-files="files"
             @save-src="code => saveCode(code)"
         ></pythonpad-runner>
     </div>
@@ -29,6 +30,16 @@
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
                 code: localStorage.getItem('saved-code') || '',
+                files: {
+                    'input.txt': {
+                        type: 'text',
+                        body: 'this file is for test\nhello world',
+                    },
+                    'asset.txt': {
+                        type: 'text',
+                        body: 'how do you do?',
+                    }
+                }
             },
             mounted: function() {
 

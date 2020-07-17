@@ -58,6 +58,7 @@ export default {
     props: [
         'gettext',
         'code',
+        'filename',
         'isRunning',
     ],
     data() {
@@ -75,6 +76,7 @@ export default {
             this.editor = CodeMirror(container, {
                 ...DEFAULT_OPTIONS,
                 value: this.code,
+                mode: this.getMode(),
             });
             this.value = this.code
             this.editor.on('changes', (instance, changeObjs) => {
@@ -82,6 +84,13 @@ export default {
                 this.value = doc.getValue()
                 this.$emit('change', this.value)
             })
+        },
+        getMode() {
+            if (this.filename.endsWith('.py')) {
+                return 'python'
+            } else {
+                return 'text'
+            }
         },
     },
     watch: {
