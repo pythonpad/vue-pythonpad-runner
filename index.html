@@ -19,7 +19,7 @@
             :static-url="staticUrl"
             :init-src="code"
             :init-files="files"
-            @save-src="code => saveCode(code)"
+            @save="handleSave"
         ></pythonpad-runner>
     </div>
     <script>
@@ -30,7 +30,7 @@
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
                 code: localStorage.getItem('saved-code') || '',
-                files: {
+                files: JSON.parse(localStorage.getItem('saved-files')) || {
                     'input.txt': {
                         type: 'text',
                         body: 'this file is for test\nhello world',
@@ -41,12 +41,18 @@
                     }
                 }
             },
-            mounted: function() {
+            mounted() {
 
             },
             methods: {
-                saveCode: function(code) {
-                    localStorage.setItem('saved-code', code)
+                handleSave(save, done) {
+                    if (save.code) {
+                        localStorage.setItem('saved-code', save.code)
+                    }
+                    if (save.files) {
+                        localStorage.setItem('saved-files', JSON.stringify(save.files))
+                    }
+                    done()
                 }
             }
         })

@@ -21,7 +21,8 @@
             </div>
             <div class="toolbar-group">
                 <button class="tool-button" @click="() => $emit('save')">
-                    <i class="fa fa-save"></i>
+                    <i v-if="isSaving" class="fa fa-spinner fa-spin"></i>
+                    <i v-else class="fa fa-save"></i>
                     {{ gettext('save') }}
                 </button>
                 <button class="tool-button" @click="() => $emit('share')">
@@ -32,6 +33,12 @@
                     <i class="fa fa-history"></i>
                     {{ gettext('reset') }}
                 </button>
+            </div>
+            <div v-if="!isSaved" class="toolbar-group">
+                <div class="tool-label is-warning">
+                    <i class="fa fa-asterisk"></i>
+                    {{ gettext('edited') }}
+                </div>
             </div>
         </div>
         <div class="toolbar-side">
@@ -91,6 +98,8 @@ export default {
     props: [
         'gettext',
         'isRunning',
+        'isSaving',
+        'isSaved',
         'isFileViewOpen',
         'viewMode',
     ],
@@ -119,6 +128,21 @@ export default {
     }
     .toolbar-group:last-of-type {
         margin: 0;
+    }
+    .tool-label {
+        display: inline-block;
+        padding: 0 0.5rem;
+        margin: 0.3rem 0.05rem;
+        font-size: 0.8rem;
+        color: #fff;
+        height: 1.9rem;
+        line-height: 1.9rem;
+    }
+    .tool-label.is-warning {
+        color: #b88b03;
+    }
+    .tool-label .fa {
+        margin-right: 0.3rem;
     }
     .tool-button {
         display: inline-block;
@@ -163,6 +187,9 @@ export default {
     }
     @media (max-width: 800px) {
         .tool-button .fa {
+            display: none;
+        }
+        .tool-label .fa {
             display: none;
         }
     }

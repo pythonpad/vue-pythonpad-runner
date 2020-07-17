@@ -4,11 +4,13 @@
             <toolbar
                 :gettext="gettext"
                 :isRunning="isRunning"
+                :isSaving="isSaving"
+                :isSaved="isCodeSaved && isFilesSaved"
                 :viewMode="viewMode"
                 :isFileViewOpen="isFileViewOpen"
                 @run="() => runEditorCode()"
                 @stop="() => stopRunning()"
-                @save="() => $emit('save')"
+                @save="handleSave"
                 @share="() => $emit('share')"
                 @reset="() => $emit('reset')"
                 @open-file-view="() => (isFileViewOpen = true)"
@@ -106,6 +108,7 @@ export default {
             inputMode: null,
             sendInput: null,
             activeFileKey: 'main.py',
+            isSaving: false,
             isCodeSaved: true,
             isFilesSaved: true,
             isRunning: false,
@@ -133,10 +136,25 @@ export default {
                 this.inputMode = 'raw'
                 this.sendInput = data => resolve(data)
             }
+            const setFile = (filename, data) => {
+                if (filename === 'main.py') {
+                    this.editorCode = data.body
+                    this.isCodeSaved = false
+                    this.$emit('edit-code', this.editorCode)
+                } else {
+                    Vue.set(this.files, filename, {
+                        type: data.type,
+                        body: data.body,
+                    })
+                    this.isFilesSaved = false
+                    this.$emit('edit-files', this.files)
+                }
+            }
             const options = {
-                codeName: 'main.py', 
+                codeName: '__main__', 
                 codeCwd: '.',
                 staticUrl: this.brythonStaticUrl,
+                files: {},
                 paths: [
                     `${this.staticUrl}/brythonlib`,
                 ],
@@ -170,7 +188,10 @@ export default {
                         default:
                             break
                     }
-                }
+                },
+                onFileUpdate(filename, data) {
+                    setFile(filename, data)
+                },
             }
             this.runner = new BrythonRunner(options)
         },
@@ -183,12 +204,28 @@ export default {
             Vue.set(this.files, fileKey, {
                 type: 'text',
                 body: body,
-            });
+            })
             this.isFilesSaved = false
             this.$emit('edit-files', this.files)
         },
         handleFileKeyChange(fileKey) {
             this.activeFileKey = fileKey
+        },
+        handleSave() {
+            const done = () => {
+                this.isSaving = false
+                this.isFilesSaved = true
+                this.isCodeSaved = true
+            }
+            const saveObj = {}
+            if (!this.isCodeSaved) {
+                saveObj.code = this.editorCode
+            }
+            if (!this.isFilesSaved) {
+                saveObj.files = this.files
+            }
+            this.isSaving = true
+            this.$emit('save', saveObj, done)
         },
         setViewMode(viewMode) {
             this.viewMode = viewMode
@@ -200,7 +237,10 @@ export default {
             this.messages = []
             this.activeTabId = 'output';
             this.isRunning = true
-            const exit = await this.runner.runCode(this.editorCode)
+            const exit = await this.runner.runCodeWithFiles(
+                this.editorCode,
+                this.files,
+            )
             this.isRunning = false
             if (exit === 0) {
                 this.messages.push({

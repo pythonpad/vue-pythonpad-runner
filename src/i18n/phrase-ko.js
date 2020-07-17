@@ -1,6 +1,7 @@
 export default {
     codeEditor: '코드 에디터',
     files: '파일',
+    edited: '수정됨',
     save: '저장',
     share: '공유',
     reset: '리셋',
