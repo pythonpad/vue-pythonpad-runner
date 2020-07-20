@@ -57,6 +57,16 @@
                                 @change="body => handleTextFileChange(activeFileKey, body)"
                             ></editor>
                         </div>
+                        <div 
+                            class="fill-parent"
+                            v-else-if="isBinaryFileVisible"
+                        >
+                            <file-viewer
+                                :gettext="gettext"
+                                :body="files[activeFileKey].body"
+                                :filename="activeFileKey"
+                            ></file-viewer>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,6 +91,7 @@ import BrythonRunner from 'brython-runner/lib/brython-runner.js'
 import Console from './console'
 import Editor from './editor'
 import FileBrowser from './file-browser'
+import FileViewer from './file-viewer'
 import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import './common.css'
@@ -98,6 +109,7 @@ export default {
         Console,
         Editor,
         FileBrowser,
+        FileViewer,
         Toolbar,
     },
     data() {
@@ -289,7 +301,13 @@ export default {
                 this.activeFileKey !== 'main.py' &&
                 this.files[this.activeFileKey].type === 'text'
             )
-        }
+        },
+        isBinaryFileVisible() {
+            return (
+                this.activeFileKey !== 'main.py' &&
+                this.files[this.activeFileKey].type === 'base64'
+            )
+        },
     },
 }
 </script>
@@ -332,7 +350,7 @@ export default {
         flex: 1 1 auto;
     }
     .editor-column {
-        
+        flex: 1 1 auto;
     }
     .editor-column.run-mode {
         display: none;
