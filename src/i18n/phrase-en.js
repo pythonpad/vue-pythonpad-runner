@@ -12,6 +12,7 @@ export default {
     editorView: 'Editor Only',
     runView: 'Console Only',
     download: 'Download',
+    tooBig: 'Size Limit Exceeded',
     msg: {
         noOutput: 'There is no output yet.',
         codeRunDone: 'Code running is done.',

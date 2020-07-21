@@ -12,6 +12,7 @@ export default {
     editorView: '에디터',
     runView: '콘솔',
     download: '다운로드',
+    tooBig: '용량 초과',
     msg: {
         noOutput: '출력 화면에 표시할 내용이 없습니다.',
         codeRunDone: '코드 실행이 종료되었습니다.',

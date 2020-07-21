@@ -8,6 +8,7 @@
                 :isSaved="isCodeSaved && isFilesSaved"
                 :viewMode="viewMode"
                 :isFileViewOpen="isFileViewOpen"
+                :isFilesTooBig="isFilesTooBig"
                 @run="() => runEditorCode()"
                 @stop="() => stopRunning()"
                 @save="handleSave"
@@ -47,6 +48,8 @@
                                 :gettext="gettext"
                                 :code="editorCode"
                                 :filename="`main.py`"
+                                @run="() => runEditorCode()"
+                                @save="handleSave"
                                 @change="handleEditorCodeChange"
                             ></editor>
                         </div>
@@ -100,6 +103,8 @@ import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import './common.css'
 
+const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
+
 export default {
     name: 'pythonpad-runner',
     props: [
@@ -129,6 +134,7 @@ export default {
             isFilesSaved: true,
             isRunning: false,
             isFileViewOpen: false,
+            isFilesTooBig: false,
             viewMode: 'basic',
             gettext: () => '',
         }
@@ -324,12 +330,29 @@ export default {
                 this.inputMode = null
             }
         },
+        checkFileSize() {
+            let s = this.editorCode.length
+            for (const [key, value] of Object.entries(this.files)) {
+                s += value.body.length
+            }
+            if (s > FILES_SIZE_LIMIT) {
+                this.isFilesTooBig = true
+            } else {
+                this.isFilesTooBig = false
+            }
+        }
     },
     watch: {
         viewMode(value, oldValue) {
             if (oldValue === 'editor' && value !== 'editor') {
                 this.$refs.console.scrollToBottom()
             }
+        },
+        files(value, oldValue) {
+            this.checkFileSize()
+        },
+        editorCode(value, oldValue) {
+            this.checkFileSize()
         },
     },
     computed: {

@@ -38,7 +38,7 @@ const DEFAULT_OPTIONS = {
     showTrailingSpace: true,
     keyMap: 'sublime',
     extraKeys: {
-        Tab: editor => {
+        'Tab': editor => {
             if (editor.somethingSelected()) {
                 editor.indentSelection('add')
             } else {
@@ -77,6 +77,13 @@ export default {
                 ...DEFAULT_OPTIONS,
                 value: this.code,
                 mode: this.getMode(),
+                extraKeys: {
+                    ...DEFAULT_OPTIONS.extraKeys,
+                    'Ctrl-S': () => this.$emit('save'),
+                    'Cmd-S': () => this.$emit('save'),
+                    'Shift-Ctrl-Enter': () => this.$emit('run'),
+                    'Shift-Cmd-Enter': () => this.$emit('run'),
+                }
             });
             this.value = this.code
             this.editor.on('changes', (instance, changeObjs) => {

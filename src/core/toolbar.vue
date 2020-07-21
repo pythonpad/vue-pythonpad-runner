@@ -20,10 +20,14 @@
                 </button>
             </div>
             <div class="toolbar-group">
-                <button class="tool-button" @click="() => $emit('save')">
+                <button v-if="!isFilesTooBig" class="tool-button" @click="() => $emit('save')">
                     <i v-if="isSaving" class="fa fa-spinner fa-spin"></i>
                     <i v-else class="fa fa-save"></i>
                     {{ gettext('save') }}
+                </button>
+                <button v-else class="tool-button is-danger is-disabled">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    {{ gettext('tooBig') }}
                 </button>
                 <button class="tool-button" @click="() => $emit('share')">
                     <i class="fa fa-share"></i>
@@ -101,6 +105,7 @@ export default {
         'isSaving',
         'isSaved',
         'isFileViewOpen',
+        'isFilesTooBig',
         'viewMode',
     ],
 }
@@ -170,17 +175,20 @@ export default {
     .tool-button.is-active {
         background-color: #666666;
     }
-    .tool-button:hover {
+    .tool-button:not(.is-disabled):hover {
         background-color: #666666;
     }
-    .tool-button.is-primary:hover {
+    .tool-button.is-primary:not(.is-disabled):hover {
         background-color: #5991f8;
     }
-    .tool-button.is-warning:hover {
+    .tool-button.is-warning:not(.is-disabled):hover {
         background-color: #b3912e;
     }
-    .tool-button.is-danger:hover {
+    .tool-button.is-danger:not(.is-disabled):hover {
         background-color: #9e5656;
+    }
+    .tool-button.is-disabled {
+        cursor: not-allowed;
     }
     .tool-button .fa {
         margin-right: 0.3rem;
