@@ -61,6 +61,8 @@
                                 :gettext="gettext"
                                 :code="files[activeFileKey].body"
                                 :filename="activeFileKey"
+                                @run="() => runEditorCode()"
+                                @save="handleSave"
                                 @change="body => handleTextFileChange(activeFileKey, body)"
                             ></editor>
                         </div>
