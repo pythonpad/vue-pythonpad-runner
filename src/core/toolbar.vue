@@ -33,10 +33,10 @@
                     <i class="fa fa-share"></i>
                     {{ gettext('share') }}
                 </button>
-                <button class="tool-button is-danger" @click="() => $emit('reset')">
+                <!-- <button class="tool-button is-danger" @click="() => $emit('reset')">
                     <i class="fa fa-history"></i>
                     {{ gettext('reset') }}
-                </button>
+                </button> -->
             </div>
             <div v-if="!isSaved" class="toolbar-group">
                 <div class="tool-label is-warning">
