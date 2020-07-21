@@ -300,7 +300,7 @@ export default {
         height: 1.6rem;
         line-height: 1.6rem;
     }
-    .tool-button:hover {
+    .tool-button:not(.is-disabled):hover {
         background-color: #666666;
     }
     .tool-button.is-disabled {
@@ -375,7 +375,7 @@ export default {
         height: 1.2rem;
         line-height: 1.2rem;
     }
-    .list-button:hover {
+    .list-button:not(.is-disabled):hover {
         background-color: #666666;
     }
     .list-button.is-disabled {
