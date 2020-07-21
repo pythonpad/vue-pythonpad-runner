@@ -256,7 +256,7 @@ export default {
                 body: this.files[filename].body,
             })
             if (this.activeFileKey === filename) {
-                this.activeFileKey = 'main.py'
+                this.activeFileKey = newFilename
             }
             Vue.delete(this.files, filename)
             this.isFilesSaved = false

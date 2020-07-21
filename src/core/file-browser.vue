@@ -37,7 +37,11 @@
                     @keyup.13="handleEditorOk"
                     @keyup.27="handleEditorCancel"
                 />
-                <button class="list-button" @click="handleEditorOk">
+                <button 
+                    class="list-button" 
+                    :class="{'is-disabled': !isEditorTextValid}"
+                    @click="handleEditorOk"
+                >
                     <i class="fa fa-check"></i>
                 </button>
                 <button class="list-button" @click="handleEditorCancel">
@@ -104,18 +108,30 @@ export default {
     },
     methods: {
         handleCreateFile() {
+            if (this.isEditing) {
+                return
+            }
             this.isCreatingFile = true
         },
         handleRenameFile() {
+            if (this.isEditing || !this.activeFileKey || this.activeFileKey === 'main.py') {
+                return
+            }
             this.isRenamingFile = true
             this.renamingFileKey = this.activeFileKey
             this.editorText = this.renamingFileKey
         },
         handleDeleteFile() {
+            if (this.isEditing || this.activeFileKey === 'main.py') {
+                return
+            }
             this.isDeletingFile = true
             this.deletingFileKey = this.activeFileKey
         },
         handleEditorOk() {
+            if (!this.isDeletingFile && !this.isEditorTextValid) {
+                return
+            }
             if (this.isCreatingFile) {
                 this.$emit('create-file', this.editorText)
             } else if (this.isRenamingFile) {
@@ -142,7 +158,9 @@ export default {
             if (value && !oldValue) {
                 this.$nextTick(() => {
                     this.$refs.files.scrollTop = 0
-                    this.$refs.editorInput.focus()
+                    if (this.$refs.editorInput) {
+                        this.$refs.editorInput.focus()
+                    }
                 })
             }
         },
@@ -159,7 +177,21 @@ export default {
         },
         isEditing() {
             return this.isCreatingFile || this.isRenamingFile || this.isDeletingFile
-        }
+        },
+        isEditorTextValid() {
+            const isDuplicate = Object.keys(this.files).includes(this.editorText) 
+            const isRenamingInit = this.isRenamingFile && (this.renamingFileKey === this.editorText)
+            const filenameValidator = /^[^<>:"/\|?*%]*$/
+            if (isDuplicate && !isRenamingInit) {
+                return false
+            } else if (['', '.', '..'].includes(this.editorText)) {
+                return false
+            } else if (!filenameValidator.test(this.editorText)) {
+                return false
+            } else {
+                return true
+            }
+        },
     }
 }
 </script>
@@ -283,6 +315,10 @@ export default {
     }
     .list-button:hover {
         background-color: #666666;
+    }
+    .list-button.is-disabled {
+        color: #666666;
+        cursor: not-allowed;
     }
     .confirm {
         display: flex;
