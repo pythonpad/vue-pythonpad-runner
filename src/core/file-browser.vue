@@ -9,6 +9,12 @@
                 >
                     <i class="fa fa-file-o"></i>
                 </button>
+                <button
+                    v-if="isAddingFile"
+                    class="tool-button is-disabled"
+                >
+                    <i class="fa fa-spinner fa-spin"></i>
+                </button>
             </div>
             <div>
                 <button 
@@ -27,7 +33,12 @@
                 </button>
             </div>
         </div>
-        <div class="files" ref="files">
+        <div 
+            class="files" 
+            ref="files" 
+            @drop.prevent="handleDropFile" 
+            @dragover.prevent
+        >
             <div v-if="isEditing && !isDeletingFile" class="editor">
                 <i class="list-icon fa fa-file-o"></i>
                 <input 
@@ -89,6 +100,8 @@
     </div>
 </template>
 <script>
+import { isTextFilename } from '../utils/file-type'
+
 export default {
     name: 'file-browser',
     props: [
@@ -101,6 +114,7 @@ export default {
             isCreatingFile: false,
             isRenamingFile: false,
             isDeletingFile: false,
+            isAddingFile: false,
             deletingFileKey: '',
             renamingFileKey: '',
             editorText: '',
@@ -143,6 +157,54 @@ export default {
         },
         handleEditorCancel() {
             this.closeEditor()  
+        },
+        async handleDropFile(e) {
+            console.log('dropfile', e.dataTransfer.files)
+            const files = e.dataTransfer.files
+            if (!files) {
+                return
+            }
+
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload = () => {
+                    let encoded = reader.result.toString().replace(/^data:(.*,)?/, '')
+                    if ((encoded.length % 4) > 0) {
+                        encoded += '='.repeat(4 - (encoded.length % 4))
+                    }
+                    resolve(encoded);
+                };
+                reader.onerror = error => reject(error)
+            })
+            const toText = file => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.readAsText(file)
+                reader.onload = () => resolve(reader.result)
+                reader.onerror = error => reject(error)
+            })
+            this.isAddingFile = true
+            for (const file of [...files]) {
+                const isText = file.type.includes('text/') || isTextFilename(file.name)
+                const filenames = Object.keys(this.files)
+                let filename = file.name
+                let count = 2
+                while (filenames.includes(filename)) {
+                    filename = `(${count})${file.name}`
+                    count += 1
+                }
+                const type = isText ? 'text' : 'base64'
+                let body = ''
+                try {
+                    if (isText) {
+                        body = await toText(file)
+                    } else {
+                        body = await toBase64(file)
+                    }
+                } catch (err) {}
+                this.$emit('add-file', filename, { type, body })
+            }
+            this.isAddingFile = false
         },
         closeEditor() {
             this.isCreatingFile = false

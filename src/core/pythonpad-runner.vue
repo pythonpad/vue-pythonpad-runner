@@ -34,6 +34,7 @@
                                 @create-file="handleCreateFile"
                                 @rename-file="handleRenameFile"
                                 @delete-file="handleDeleteFile"
+                                @add-file="handleAddFile"
                             ></file-browser>
                         </div>
                     </div>
@@ -267,6 +268,11 @@ export default {
                 this.activeFileKey = 'main.py'
             }
             Vue.delete(this.files, filename)
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
+        handleAddFile(filename, fileObject) {
+            Vue.set(this.files, filename, fileObject)
             this.isFilesSaved = false
             this.$emit('edit-files', this.files)
         },
