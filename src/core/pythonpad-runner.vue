@@ -31,6 +31,9 @@
                                 :files="files"
                                 :activeFileKey="activeFileKey"
                                 @active-file-key-change="fileKey => handleFileKeyChange(fileKey)"
+                                @create-file="handleCreateFile"
+                                @rename-file="handleRenameFile"
+                                @delete-file="handleDeleteFile"
                             ></file-browser>
                         </div>
                     </div>
@@ -239,6 +242,34 @@ export default {
             this.isSaving = true
             this.$emit('save', saveObj, done)
         },
+        handleCreateFile(filename) {
+            Vue.set(this.files, filename, {
+                type: 'text',
+                body: '',
+            })
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
+        handleRenameFile(filename, newFilename) {
+            Vue.set(this.files, newFilename, {
+                type: this.files[filename].type,
+                body: this.files[filename].body,
+            })
+            if (this.activeFileKey === filename) {
+                this.activeFileKey = 'main.py'
+            }
+            Vue.delete(this.files, filename)
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
+        handleDeleteFile(filename) {
+            if (this.activeFileKey === filename) {
+                this.activeFileKey = 'main.py'
+            }
+            Vue.delete(this.files, filename)
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
         setViewMode(viewMode) {
             this.viewMode = viewMode
         },
@@ -299,12 +330,14 @@ export default {
         isTextFileVisible() {
             return (
                 this.activeFileKey !== 'main.py' &&
+                this.files.hasOwnProperty(this.activeFileKey) && 
                 this.files[this.activeFileKey].type === 'text'
             )
         },
         isBinaryFileVisible() {
             return (
                 this.activeFileKey !== 'main.py' &&
+                this.files.hasOwnProperty(this.activeFileKey) && 
                 this.files[this.activeFileKey].type === 'base64'
             )
         },

@@ -19,5 +19,6 @@ export default {
         codeRunStopped: 'Code running has been stopped.',
         outputCountLimited: 'Only %{smart_count} line can be shown here. |||| Maximum %{smart_count} lines can be shown here.',
         noPreview: 'File preview is not available.',
+        deleteConfirm: 'Delete %{filename}?',
     },
 }   

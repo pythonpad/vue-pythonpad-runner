@@ -19,5 +19,6 @@ export default {
         codeRunStopped: '코드 실행이 중단되었습니다.',
         outputCountLimited: '동시에 최대 %{smart_count}개의 출력물만 표시됩니다.',
         noPreview: '프리뷰가 지원되지 않는 파일입니다.',
+        deleteConfirm: '%{filename}을(를) 삭제하시겠습니까?',
     },
 }   
