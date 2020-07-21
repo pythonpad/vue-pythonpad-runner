@@ -239,6 +239,9 @@ export default {
                 this.isFilesSaved = true
                 this.isCodeSaved = true
             }
+            const error = () => {
+                this.isSaving = false
+            }
             const saveObj = {}
             if (!this.isCodeSaved) {
                 saveObj.code = this.editorCode
@@ -247,7 +250,7 @@ export default {
                 saveObj.files = this.files
             }
             this.isSaving = true
-            this.$emit('save', saveObj, done)
+            this.$emit('save', saveObj, done, error)
         },
         handleCreateFile(filename) {
             Vue.set(this.files, filename, {
@@ -290,7 +293,6 @@ export default {
                 return;
             }
             this.messages = []
-            this.activeTabId = 'output';
             this.isRunning = true
             const exit = await this.runner.runCodeWithFiles(
                 this.editorCode,
@@ -308,6 +310,7 @@ export default {
                     body: this.gettext('msg.errorOnRunning') + '\n',
                 })
             }
+            this.handleSave()
         },
         stopRunning() {
             this.runner.stopRunning()
