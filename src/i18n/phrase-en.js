@@ -10,8 +10,8 @@ export default {
     stop: 'Stop',
     send: 'Send',
     basicView: 'Basic View',
-    editorView: 'Editor Only',
-    runView: 'Console Only',
+    editorView: 'Editor',
+    runView: 'Terminal',
     download: 'Download',
     tooBig: 'Size Limit Exceeded',
     msg: {

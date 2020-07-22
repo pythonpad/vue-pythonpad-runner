@@ -11,7 +11,7 @@ export default {
     send: '보내기',
     basicView: '기본 뷰',
     editorView: '에디터',
-    runView: '콘솔',
+    runView: '터미널',
     download: '다운로드',
     tooBig: '용량 초과',
     msg: {

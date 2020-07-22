@@ -88,6 +88,7 @@
                     :class="{
                         'is-active': viewMode === 'editor',
                         'is-active-in-mobile': viewMode === 'basic',
+                        'is-highlighted-in-mobile': viewMode === 'run' && !isRunning,
                     }"
                     @click="() => $emit('set-view-mode', 'editor')"
                 >
@@ -225,6 +226,15 @@ export default {
         }
         .tool-button.is-hidden-in-mobile {
             display: none;
+        }
+        .tool-button.is-highlighted-in-mobile {
+            animation: blink 1s linear infinite;
+        }
+        @keyframes blink {  
+            0% { background-color: #444444; }
+            20% { background-color: #2B73F5; }
+            80% { background-color: #2B73F5; }
+            100% { background-color: #444444; }
         }
         .tool-button .fa:not(.fa-spin) {
             display: none;
