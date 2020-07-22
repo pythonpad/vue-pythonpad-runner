@@ -74,7 +74,7 @@ export default {
     },
     watch: {
         inputMode() {
-            if (this.inputMode === 'text') {
+            if (this.inputMode === 'raw') {
                 this.$nextTick(() => {
                     this.$refs.textInput.focus()
                 })
