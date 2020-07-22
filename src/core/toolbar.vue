@@ -69,7 +69,7 @@
             </div>
             <div class="toolbar-group">
                 <button 
-                    class="tool-button"
+                    class="tool-button is-hidden-in-mobile"
                     :class="{'is-active': viewMode === 'basic'}"
                     @click="() => $emit('set-view-mode', 'basic')"
                 >
@@ -78,7 +78,10 @@
                 </button>
                 <button 
                     class="tool-button"
-                    :class="{'is-active': viewMode === 'editor'}"
+                    :class="{
+                        'is-active': viewMode === 'editor',
+                        'is-active-in-mobile': viewMode === 'basic',
+                    }"
                     @click="() => $emit('set-view-mode', 'editor')"
                 >
                     <i class="fa fa-code"></i>
@@ -194,6 +197,27 @@ export default {
         margin-right: 0.3rem;
     }
     @media (max-width: 800px) {
+        .toolbar {
+            height: 2rem;
+        }
+        .tool-label {
+            margin: 0.2rem 0.05rem;
+            font-size: 0.8rem;
+            height: 1.6rem;
+            line-height: 1.6em;
+        }
+        .tool-button {
+            margin: 0.2rem 0.05rem;
+            font-size: 0.8rem;
+            height: 1.6rem;
+            line-height: 1.6rem;
+        }
+        .tool-button.is-active-in-mobile {
+            background-color: #666666;
+        }
+        .tool-button.is-hidden-in-mobile {
+            display: none;
+        }
         .tool-button .fa {
             display: none;
         }

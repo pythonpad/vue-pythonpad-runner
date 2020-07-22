@@ -79,7 +79,7 @@
                     </div>
                 </div>
             </div>
-            <div class="column output-column" :class="`${viewMode}-mode`">
+            <div ref="outputColumn" class="column output-column" :class="`${viewMode}-mode`">
                 <div class="fill-parent">
                     <console
                         ref="console"
@@ -294,6 +294,7 @@ export default {
             if (this.editorCode.trim() === '') {
                 return;
             }
+            this.showOutputColumn()
             this.messages = []
             this.isRunning = true
             const exit = await this.runner.runCodeWithFiles(
@@ -345,7 +346,12 @@ export default {
             } else {
                 this.isFilesTooBig = false
             }
-        }
+        },
+        showOutputColumn() {
+            if (this.$refs.outputColumn.offsetParent === null) {
+                this.viewMode = 'run'
+            }
+        },
     },
     watch: {
         viewMode(value, oldValue) {
@@ -424,7 +430,7 @@ export default {
     }
     .output-column {
         width: 32rem;
-        max-width: 50%;
+        max-width: 40%;
         flex: 0 0 auto;
     }
     .output-column.run-mode {
@@ -442,9 +448,19 @@ export default {
         display: none;
     }
     @media (max-width: 800px) {
-        .output-column {
-            flex: 1 1 auto;
-            max-width: none;
+        .pythonpad-runner {
+            padding-bottom: 2rem;
+        }
+        .toolbar-box {
+            height: 2rem;
+        }
+        .output-column.basic-mode {
+            display: none;
+        }
+        .file-browser-column {
+            width: 16rem;
+            max-width: 30%;
+            flex: 0 0 auto;
         }
     }
 </style>
