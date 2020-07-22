@@ -3,6 +3,7 @@
         <div class="toolbar-box">
             <toolbar
                 :gettext="gettext"
+                :isRunnerReady="isRunnerReady"
                 :isRunning="isRunning"
                 :isSaving="isSaving"
                 :isSaved="isCodeSaved && isFilesSaved"
@@ -131,6 +132,7 @@ export default {
             inputMode: null,
             sendInput: null,
             activeFileKey: 'main.py',
+            isRunnerReady: false,
             isSaving: false,
             isCodeSaved: true,
             isFilesSaved: true,
@@ -174,6 +176,7 @@ export default {
                     this.$emit('edit-files', this.files)
                 }
             }
+            const setRunnerReady = () => this.isRunnerReady = true
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
@@ -215,6 +218,9 @@ export default {
                 },
                 onFileUpdate(filename, data) {
                     setFile(filename, data)
+                },
+                onInit() {
+                    setRunnerReady()
                 },
             }
             this.runner = new BrythonRunner(options)
@@ -316,6 +322,7 @@ export default {
             this.handleSave()
         },
         stopRunning() {
+            this.isRunnerReady = false
             this.runner.stopRunning()
             this.sendInput = null
             this.inputMode = null

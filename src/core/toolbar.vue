@@ -3,7 +3,14 @@
         <div class="toolbar-side">
             <div class="toolbar-group">
                 <button 
-                    v-if="isRunning" 
+                    v-if="!isRunnerReady"
+                    class="tool-button is-warning is-disabled"
+                >
+                    <i class="fa fa-spinner fa-spin"></i>
+                    {{ gettext('preparing') }}
+                </button>
+                <button 
+                    v-else-if="isRunning" 
                     class="tool-button is-warning"
                     @click="() => $emit('stop')"
                 >
@@ -104,6 +111,7 @@ export default {
     name: 'toolbar',
     props: [
         'gettext',
+        'isRunnerReady',
         'isRunning',
         'isSaving',
         'isSaved',

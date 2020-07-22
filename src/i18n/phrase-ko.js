@@ -5,6 +5,7 @@ export default {
     save: '저장',
     share: '공유',
     reset: '리셋',
+    preparing: '로딩중',
     run: '실행',
     stop: '중지',
     send: '보내기',
