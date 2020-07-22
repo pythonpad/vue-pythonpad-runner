@@ -226,10 +226,10 @@ export default {
         .tool-button.is-hidden-in-mobile {
             display: none;
         }
-        .tool-button .fa {
+        .tool-button .fa:not(.fa-spin) {
             display: none;
         }
-        .tool-label .fa {
+        .tool-label .fa:not(.fa-spin) {
             display: none;
         }
     }
