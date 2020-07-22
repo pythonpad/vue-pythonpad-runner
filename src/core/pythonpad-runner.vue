@@ -242,6 +242,9 @@ export default {
             this.activeFileKey = fileKey
         },
         handleSave() {
+            if (this.isFilesTooBig) {
+                return
+            }
             const done = () => {
                 this.isSaving = false
                 this.isFilesSaved = true
