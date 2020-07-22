@@ -242,7 +242,7 @@ export default {
             this.activeFileKey = fileKey
         },
         handleSave() {
-            if (this.isFilesTooBig) {
+            if (this.isFilesTooBig || this.isSaved) {
                 return
             }
             const done = () => {
@@ -322,7 +322,9 @@ export default {
                     body: this.gettext('msg.errorOnRunning') + '\n',
                 })
             }
-            this.handleSave()
+            if (!this.isFilesSaved) {
+                this.handleSave()
+            }
         },
         stopRunning() {
             this.isRunnerReady = false
