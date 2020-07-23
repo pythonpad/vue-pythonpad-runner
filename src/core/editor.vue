@@ -136,7 +136,7 @@ export default {
         }
         .editor-container /deep/ .CodeMirror { 
             height: auto;
-            min-height: 5rem;
+            min-height: 10rem;
         }
     }
 </style>

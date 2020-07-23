@@ -359,6 +359,7 @@ export default {
         font-size: 0.8rem;
         line-height: 1.2rem;
         height: 1.2rem;
+        min-width: none;
     }
     .list-button {
         flex: 0 0 auto;
@@ -397,5 +398,11 @@ export default {
         margin-right: 0.3rem;
         color: #ffffff;
         font-size: 0.8rem;
+    }
+    @media (max-width: 800px) {
+        .editor input {
+            flex: 0 0 auto;
+            width: calc(100% - 4.5rem);
+        }
     }
 </style>
