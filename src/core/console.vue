@@ -7,7 +7,7 @@
                         v-if="messages.length > 2000"
                         class="info system"  
                     >
-                        {{ gettext('msg.outputCountLimited', { smartCount: 2000 }) }}
+                        {{ gettext('msg.outputCountLimited', { smart_count: 2000 }) }}
                     </div>
                     <template v-for="(message, i) in visibleMessages">
                         <span 
