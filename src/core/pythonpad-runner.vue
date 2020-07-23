@@ -371,6 +371,11 @@ export default {
                 this.$refs.console.scrollToBottom()
             }
         },
+        inputMode(value, oldValue) {
+            if (value !== null) {
+                this.$refs.console.scrollToBottom()
+            }
+        },
         files(value, oldValue) {
             this.checkFileSize()
         },
