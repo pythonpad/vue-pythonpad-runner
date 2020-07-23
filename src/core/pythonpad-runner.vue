@@ -405,11 +405,12 @@ export default {
         padding-bottom: 2.5rem;
     }
     .toolbar-box {
-        position: absolute;
+        position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 2.5rem;
+        z-index: 500;
     }
     .columns {
         width: 100%;
@@ -430,12 +431,14 @@ export default {
         width: 16rem;
         max-width: 50%;
         flex: 0 0 auto;
+        background-color: #333333;
     }
     .full-column {
         flex: 1 1 auto;
     }
     .editor-column {
         flex: 1 1 auto;
+        background-color: #2e3440;
     }
     .editor-column.run-mode {
         display: none;
@@ -470,9 +473,18 @@ export default {
             display: none;
         }
         .file-browser-column {
-            width: 16rem;
-            max-width: 30%;
+            min-width: 10rem;
+            width: 25%;
+            max-width: 16rem;
             flex: 0 0 auto;
+        }
+    }
+    @media (max-width: 480px) {
+        .pythonpad-runner {
+            height: auto;
+        }
+        .fill-parent {
+            height: auto;
         }
     }
 </style>

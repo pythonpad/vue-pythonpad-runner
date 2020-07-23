@@ -114,7 +114,6 @@ export default {
 <style scoped>
     .editor {
         position: relative;
-        /* padding-bottom: 3rem;  */
     }
     .fill {
         width: 100%;
@@ -131,30 +130,12 @@ export default {
         word-wrap: break-word;
         word-break: break-all !important;
     }
-    /* .tool-box {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3rem;
+    @media (max-width: 480px) {
+        .fill {
+            height: auto;
+        }
+        .editor-container /deep/ .CodeMirror { 
+            height: auto;
+        }
     }
-    .tool-button {
-        border: 0;
-        background-color: #2B73F5;
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-        color: #fff;
-        font-size: 1rem;
-        outline: 0;
-        cursor: pointer;
-    }
-    .tool-button.warning {
-        background-color: #b88b03;
-    }
-    .tool-button:hover {
-        opacity: 0.8
-    } */
 </style>

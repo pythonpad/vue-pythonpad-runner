@@ -1,10 +1,19 @@
 body {
+    background-color: #222;
     padding: 0;
     margin: 0;
 }
 
 .app {
+    font-family: 'NanumGothic', 'Apple Gothic', sans-serif;
     width: 100vw;
     height: 100vh;
-    font-family: 'NanumGothic', 'Apple Gothic', sans-serif;
+}
+
+@media (max-width: 480px) {
+    .app {
+        font-family: 'NanumGothic', 'Apple Gothic', sans-serif;
+        width: auto;
+        height: auto;
+    }
 }

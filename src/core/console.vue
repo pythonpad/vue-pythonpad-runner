@@ -144,7 +144,6 @@ export default {
         left: 0;
         width: 100%;
         height: 2.5rem;
-        /* padding: 0.4rem; */
     }
     .input-row-inner-box {
         position: relative;
@@ -160,8 +159,8 @@ export default {
     }
     .input {
         border: 0;
-        outline: 0;;
-        line-height: 2rem;
+        outline: 0;
+        padding: 0.6rem 0;
         font-size: 0.8rem;
     }
     .input:disabled {
@@ -175,7 +174,7 @@ export default {
         top: 0;
         right: 0;
         width: 5rem;
-        height: 100%;
+        height: 2.5rem;
         color: #fff;
         font-size: 0.8rem;
         outline: 0;
@@ -187,5 +186,15 @@ export default {
     .send-button:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+    @media (max-width: 480px) {
+        .fill {
+            height: auto;
+        }
+        .input-row-box {
+            position: fixed;
+            bottom: 2rem;
+            left: 0;
+        }
     }
 </style>

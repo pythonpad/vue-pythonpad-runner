@@ -7,7 +7,7 @@
                     class="tool-button is-warning is-disabled"
                 >
                     <i class="fa fa-spinner fa-spin"></i>
-                    {{ gettext('preparing') }}
+                    <span>{{ gettext('preparing') }}</span>
                 </button>
                 <button 
                     v-else-if="isRunning" 
@@ -15,7 +15,7 @@
                     @click="() => $emit('stop')"
                 >
                     <i class="fa fa-stop"></i>
-                    {{ gettext('stop') }}
+                    <span>{{ gettext('stop') }}</span>
                 </button>
                 <button 
                     v-else 
@@ -23,32 +23,32 @@
                     @click="() => $emit('run')"
                 >
                     <i class="fa fa-play" ></i>
-                    {{ gettext('run') }}
+                    <span>{{ gettext('run') }}</span>
                 </button>
             </div>
             <div class="toolbar-group">
                 <button v-if="!isFilesTooBig" class="tool-button" @click="() => $emit('save')">
                     <i v-if="isSaving" class="fa fa-spinner fa-spin"></i>
                     <i v-else class="fa fa-save"></i>
-                    {{ gettext('save') }}
+                    <span>{{ gettext('save') }}</span>
                 </button>
                 <button v-else class="tool-button is-danger is-disabled">
                     <i class="fa fa-exclamation-triangle"></i>
-                    {{ gettext('tooBig') }}
+                    <span>{{ gettext('tooBig') }}</span>
                 </button>
                 <button class="tool-button" @click="() => $emit('share')">
                     <i class="fa fa-share"></i>
-                    {{ gettext('share') }}
+                    <span>{{ gettext('share') }}</span>
                 </button>
                 <!-- <button class="tool-button is-danger" @click="() => $emit('reset')">
                     <i class="fa fa-history"></i>
-                    {{ gettext('reset') }}
+                    <span>{{ gettext('reset') }}</span>
                 </button> -->
             </div>
             <div v-if="!isSaved" class="toolbar-group">
                 <div class="tool-label is-warning">
                     <i class="fa fa-asterisk"></i>
-                    {{ gettext('edited') }}
+                    <span>{{ gettext('edited') }}</span>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
                     @click="() => $emit('close-file-view')"
                 >
                     <i class="fa fa-folder-open"></i>
-                    {{ gettext('files') }}
+                    <span>{{ gettext('files') }}</span>
                 </button>
                 <button 
                     v-else
@@ -71,7 +71,7 @@
                     @click="() => $emit('open-file-view')"
                 >
                     <i class="fa fa-folder"></i>
-                    {{ gettext('files') }}
+                    <span>{{ gettext('files') }}</span>
                 </button>
             </div>
             <div class="toolbar-group">
@@ -81,7 +81,7 @@
                     @click="() => $emit('set-view-mode', 'basic')"
                 >
                     <i class="fa fa-columns"></i>
-                    {{ gettext('basicView') }}
+                    <span>{{ gettext('basicView') }}</span>
                 </button>
                 <button 
                     class="tool-button"
@@ -93,7 +93,7 @@
                     @click="() => $emit('set-view-mode', 'editor')"
                 >
                     <i class="fa fa-code"></i>
-                    {{ gettext('editorView') }}
+                    <span>{{ gettext('editorView') }}</span>
                 </button>
                 <button 
                     class="tool-button"
@@ -101,7 +101,7 @@
                     @click="() => $emit('set-view-mode', 'run')"
                 >
                     <i class="fa fa-terminal"></i>
-                    {{ gettext('runView') }}
+                    <span>{{ gettext('runView') }}</span>
                 </button>
             </div>
         </div>
@@ -213,7 +213,7 @@ export default {
             margin: 0.2rem 0.05rem;
             font-size: 0.8rem;
             height: 1.6rem;
-            line-height: 1.6em;
+            line-height: 1.6rem;
         }
         .tool-button {
             margin: 0.2rem 0.05rem;
@@ -239,8 +239,20 @@ export default {
         .tool-button .fa:not(.fa-spin) {
             display: none;
         }
-        .tool-label .fa:not(.fa-spin) {
+        .tool-label span {
             display: none;
         }
+        .tool-label .fa {
+            margin: 0;
+        }
     }
+    @media (max-width: 400px) {
+        .tool-button .fa:not(.fa-spin) {
+            display: inline-block;
+            margin: 0;
+        }
+        .tool-button span {
+            display: none;
+        }
+    }   
 </style>
