@@ -29,7 +29,7 @@
                     </template>
                 </div>
             </div>
-            <div class="input-row-box">
+            <div class="input-row-box" :class="{ 'disabled': !inputMode }">
                 <div class="input-row-inner-box fill">
                     <div class="input-box fill" :class="{ 'disabled': !inputMode }">
                         <input ref="textInput" class="input fill" type="text" :disabled="!inputMode" v-on:keyup.13="sendText" v-model="inputText"></input>
@@ -69,6 +69,7 @@ export default {
             this.$nextTick(() => {
                 const box = this.$refs.box
                 box.scrollTo(0, box.scrollHeight);
+                document.body.scrollTo(0, document.body.scrollHeight);
             })
         },
     },
@@ -160,7 +161,7 @@ export default {
     .input {
         border: 0;
         outline: 0;
-        padding: 0.6rem 0;
+        padding: 0.35rem 0;
         font-size: 0.8rem;
     }
     .input:disabled {
@@ -169,12 +170,13 @@ export default {
     }
     .send-button {
         border: 0;
+        border-radius: 0;
         background-color: #2B73F5;
         position: absolute;
         top: 0;
         right: 0;
         width: 5rem;
-        height: 2.5rem;
+        height: 100%;
         color: #fff;
         font-size: 0.8rem;
         outline: 0;
@@ -188,13 +190,22 @@ export default {
         cursor: not-allowed;
     }
     @media (max-width: 480px) {
+        .output-container {
+            padding: 0;
+        }
         .fill {
             height: auto;
         }
         .input-row-box {
-            position: fixed;
-            bottom: 2rem;
-            left: 0;
+            position: relative;
+            padding: 0.5rem 1rem;
+            height: auto;
+        }
+        .input-row-box.disabled {
+            display: none;
+        }
+        .input {
+            padding: 0;
         }
     }
 </style>
