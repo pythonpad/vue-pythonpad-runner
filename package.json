@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.10.2",
-    "brython-runner": "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.11",
+    "brython-runner": "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.12",
     "codemirror": "^5.54.0",
     "font-awesome": "^4.7.0",
     "node-polyglot": "^2.4.0",
