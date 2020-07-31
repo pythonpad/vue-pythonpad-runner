@@ -86,4 +86,5 @@ class World(object):
         self.drawer.on_rotate(piece)
 
     def on_pause(self, duration):
-        self.drawer.on_pause(duration)
+        if duration > 0:
+            self.drawer.on_pause(duration)

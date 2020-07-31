@@ -81,15 +81,21 @@
                 </div>
             </div>
             <div ref="outputColumn" class="column output-column" :class="`${viewMode}-mode`">
-                <div class="fill-parent">
-                    <console
-                        ref="console"
-                        :gettext="gettext"
-                        :staticUrl="staticUrl"
-                        :messages="messages"
-                        :inputMode="inputMode"
-                        @send-text="text => sendText(text)"
-                    ></console>
+                <div :class="{ 'output-wrapper': isScreen, 'fill-parent': !isScreen }">
+                    <div v-if="isScreen" class="screen-box">
+                        <div ref="screen" class="screen">
+                        </div>
+                    </div>
+                    <div :class="{ 'console-box': isScreen, 'fill-parent': !isScreen }">
+                        <console
+                            ref="console"
+                            :gettext="gettext"
+                            :staticUrl="staticUrl"
+                            :messages="messages"
+                            :inputMode="inputMode"
+                            @send-text="text => sendText(text)"
+                        ></console>
+                    </div>
                 </div>
             </div>
         </div>
@@ -104,6 +110,7 @@ import FileBrowser from './file-browser'
 import FileViewer from './file-viewer'
 import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
+import RobotDrawHelper from '../brythonlib/cs1robots/index'
 import './common.css'
 
 const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
@@ -137,6 +144,7 @@ export default {
             isCodeSaved: true,
             isFilesSaved: true,
             isRunning: false,
+            isScreen: false,
             isFileViewOpen: false,
             isFilesTooBig: false,
             viewMode: 'basic',
@@ -177,6 +185,18 @@ export default {
                 }
             }
             const setRunnerReady = () => this.isRunnerReady = true
+            const enableScreen = callback => {
+                this.isScreen = true
+                this.$nextTick(() => callback(this.$refs.screen))
+            }
+            const initRobotDrawHelper = () => {
+                enableScreen(screenElement => {
+                    this.robotDrawHelper = new RobotDrawHelper(screenElement)
+                })
+            }
+            const drawRobot = msg => {
+                this.robotDrawHelper.draw(msg)
+            }
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
@@ -212,6 +232,14 @@ export default {
                 },
                 onMsg(type, value) {
                     switch (type) {
+                        case 'screen.cs1robot.init':
+                            initRobotDrawHelper()
+                            break
+
+                        case 'screen.cs1robot.draw':
+                            drawRobot(value)
+                            break
+
                         default:
                             break
                     }
@@ -303,6 +331,7 @@ export default {
             if (this.editorCode.trim() === '') {
                 return;
             }
+            this.isScreen = false
             this.showOutputColumn()
             this.messages = []
             this.isRunning = true
@@ -460,12 +489,42 @@ export default {
     .output-column.editor-mode {
         display: none;
     }
+    .output-wrapper {
+        position: relative;
+        padding-top: 20rem;
+        width: 100%;
+        height: 100%;
+    }
+    .screen-box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20rem;
+        width: 100%;
+    }
+    .console-box {
+        width: 100%;
+        height: 100%;
+    }
+    .screen {
+        background-color: #000000;
+        width: 100%;
+        height: 100%;
+    }
     .fill-parent {
         width: 100%;
         height: 100%;
     }
     .is-hidden {
         display: none;
+    }
+    @media (max-height: 480px) {
+        .output-wrapper {
+            padding-top: 10rem;
+        }
+        .screen-box {
+            height: 10rem;
+        }
     }
     @media (max-width: 800px) {
         .pythonpad-runner {
@@ -490,6 +549,25 @@ export default {
         }
         .fill-parent {
             height: auto;
+        }
+        .output-wrapper {
+            padding-top: 0;
+            padding-bottom: 20rem;
+        }
+        .screen-box {
+            position: fixed;
+            top: auto;
+            bottom: 2rem;
+            height: 20rem;
+            z-index: 500;
+        }
+    }
+    @media (max-width: 480px) and (max-height: 480px) {
+        .output-wrapper {
+            padding-bottom: 10rem;
+        }
+        .screen-box {
+            height: 10rem;
         }
     }
 </style>
