@@ -7,7 +7,6 @@ export default class RobotDrawer {
     this.gridCells = {};
     this.taskQueue = [];
     this.initWorldElement();
-    this.handleTaskQueue();
   }
 
   initWorldElement() {
@@ -350,7 +349,7 @@ export default class RobotDrawer {
 
   onTask(taskMessage) {
     const task = JSON.parse(taskMessage);
-    this.taskQueue.push(task);
+    this.processTask(task);
   }
 
   processTask(task) {
@@ -381,20 +380,6 @@ export default class RobotDrawer {
 
       default:
         break;
-    }
-  }
-
-  handleTaskQueue() {
-    if (this.taskQueue.length === 0) {
-      setTimeout(() => this.handleTaskQueue(), 50);
-    } else {
-      const task = this.taskQueue.shift();
-      if (task.task === 'pause') {
-        setTimeout(() => this.handleTaskQueue(), task.duration * 1000);
-      } else {
-        this.processTask(task);
-        setTimeout(() => this.handleTaskQueue(), 1);
-      }
     }
   }
 }

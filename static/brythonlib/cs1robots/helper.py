@@ -15,10 +15,14 @@ def is_world():
     except:
         return False
 
-def create_world(**kwargs):
+def create_world(streets=None, avenues=None):
+    width = 10 if avenues is None else avenues
+    height = 10 if streets is None else streets
+    if avenues is None:
+        width = 10
     global __robot__
     __robot__ = {}
-    __robot__['world'] = World(**kwargs)
+    __robot__['world'] = World(width=width, height=height)
 
 def load_world(world_name):
     if '/' in world_name:
@@ -45,17 +49,16 @@ def get_all_beepers_dict():
     return get_world().get_all_beepers_dict()
 
 class Robot(GeneralRobot):
-    def __init__(self, row=None, column=None, direction=None, beepers=0):
+    def __init__(self, avenue=None, street=None, orientation=None, beepers=0):
         global __robot__
-        params = {
-            'beepers': beepers
-        }
-        if row is not None and column is not None:
-            params['position'] = Position(column, row)
-        if direction is not None:
-            params['direction'] = Direction(direction)
-        super().__init__(**params)
+        row = (street - 1) if street is not None else 1
+        column = (avenue - 1) if avenue is not None else 1
+        direction = orientation if orientation is not None else 'E'
+        super().__init__(position=Position(column, row), direction=Direction(direction), beepers=beepers)
         __robot__['world'].add_piece(self)
+
+    def get_pos(self):
+        return self.position.x + 1, self.position.y + 1
 
 __all__ = [
     'create_world',

@@ -46,6 +46,8 @@ def conv_world(kaist_world_dict):
 
 def get_world_dict(title):
     global worlds_data
+    if title not in worlds_data:
+        raise ValueError('Unknown world name: "%s"' % title)
     return conv_world(worlds_data[title])
 
 worlds_data = {

@@ -3,7 +3,7 @@ from .beeper import Beeper
 from .direction import Direction, load_direction_from_save
 from .position import Position, load_position_from_save
 
-DEFAULT_PAUSE_DURATION = 0.1
+DEFAULT_PAUSE_DURATION = 0
 
 def load_robot_from_save(robot_save):
     return Robot(
