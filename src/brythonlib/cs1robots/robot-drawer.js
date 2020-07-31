@@ -28,7 +28,7 @@ export default class RobotDrawer {
   setWorldElementSize(width, height, marginTop) {
     this.worldElement.style.width = `${width}px`;
     this.worldElement.style.height = `${height}px`;
-    // this.worldElement.style.marginTop = `${marginTop}px`;
+    this.containerElement.style.paddingTop = `${marginTop}px`;
   }
 
   initGridCells() {
