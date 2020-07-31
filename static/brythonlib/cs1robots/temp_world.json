@@ -1,0 +1,1 @@
+{"type": "world", "width": 10, "height": 10, "pieces": {"0": {"type": "beeper", "piece_type": "marker", "position": {"type": "position", "x": 0, "y": 0}}}, "walls": [{"type": "wall", "position_1": {"type": "position", "x": 1, "y": 0}, "position_2": {"type": "position", "x": 2, "y": 0}}]}
