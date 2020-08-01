@@ -111,6 +111,9 @@ import FileViewer from './file-viewer'
 import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import RobotDrawHelper from '../brythonlib/cs1robots/index'
+import { showPicture } from '../brythonlib/cs1media'
+import { hasCs1media } from '../utils/code'
+import { getFilesWithImageProps } from '../utils/image-conv'
 import './common.css'
 
 const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
@@ -197,6 +200,11 @@ export default {
             const drawRobot = msg => {
                 this.robotDrawHelper.draw(msg)
             }
+            const showPictureOnScreen = value => {
+                enableScreen(screenElement => {
+                    showPicture(screenElement, value)
+                })
+            }
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
@@ -238,6 +246,10 @@ export default {
 
                         case 'screen.cs1robot.draw':
                             drawRobot(value)
+                            break
+
+                        case 'screen.cs1media.show':
+                            showPictureOnScreen(value)
                             break
 
                         default:
@@ -335,9 +347,16 @@ export default {
             this.showOutputColumn()
             this.messages = []
             this.isRunning = true
+
+            const files = (
+                hasCs1media(this.editorCode) ? 
+                (await getFilesWithImageProps(this.files)) : 
+                this.files
+            )
+
             const exit = await this.runner.runCodeWithFiles(
                 this.editorCode,
-                this.files,
+                files,
             )
             this.isRunning = false
             if (exit === 0) {

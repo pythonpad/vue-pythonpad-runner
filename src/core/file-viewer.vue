@@ -8,22 +8,8 @@
     </div>
 </template>
 <script>
-const IMAGE_EXT_TO_MIME = {
-    'apng': 'image/apng',
-    'bmp': 'image/bmp',
-    'gif': 'image/gif',
-    'ico': 'image/x-icon',
-    'cur': 'image/x-icon',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'jfif': 'image/jpeg',
-    'pjpeg': 'image/jpeg',
-    'png': 'image/png',
-    'svg': 'image/svg+xml',
-    'tiff': 'image/tiff',
-    'tif': 'image/tiff',
-    'webp': 'image/webp',
-}
+import { isImageFilename, toDataUrl } from '../utils/image-conv'
+
 export default {
     name: 'file-viewer',
     props: [
@@ -49,14 +35,10 @@ export default {
     },
     computed: {
         isImageFile() {
-            return Object
-                .keys(IMAGE_EXT_TO_MIME)
-                .includes(this.getFileExtension())
+            return isImageFilename(this.filename)
         },
         imageSrc() {
-            const mime = IMAGE_EXT_TO_MIME[this.getFileExtension()]
-            const data = this.body
-            return `data:${mime};base64,${data}`
+            return toDataUrl(this.filename, this.body)
         },
     }
 }
