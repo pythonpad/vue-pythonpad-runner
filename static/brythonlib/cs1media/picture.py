@@ -2,12 +2,6 @@ import browser
 import json
 from .color import Color
 
-# def sanitize_color(color):
-#     if isinstance(color, str):
-#         return getattr(Color, color)
-#     else:
-#         return color
-
 def sanitize_color(color):
     if isinstance(color, str):
         return list(getattr(Color, color))
