@@ -1,11 +1,11 @@
 from .event_trigger import _EventTrigger
 from .graphics_container import _GraphicsContainer
-from .json_drawer import JsonDrawer
+from .pythonpad_drawer import PythonpadDrawer
 from .store import set_canvas, remove_canvas, create_uid
 
 class Canvas(_EventTrigger, _GraphicsContainer):
     def __init__(self, w=200, h=200, bgColor=None, title='Graphics canvas', autoRefresh=True):
-        self.drawer = JsonDrawer(auto_flush=autoRefresh)
+        self.drawer = PythonpadDrawer(auto_flush=autoRefresh)
         _EventTrigger.__init__(self)
         _GraphicsContainer.__init__(self, self.drawer)
         self.id = create_uid(self)
@@ -19,6 +19,7 @@ class Canvas(_EventTrigger, _GraphicsContainer):
 
     def draw(self):
         return {
+            'type': 'canvas',
             'id': self.id,
             'width': self.width,
             'height': self.height,

@@ -111,6 +111,7 @@ import FileViewer from './file-viewer'
 import Toolbar from './toolbar'
 import Phrase from '../i18n/phrase'
 import RobotDrawHelper from '../brythonlib/cs1robots/index'
+import CanvasDrawHelper from '../brythonlib/cs1graphics/index'
 import { showPicture } from '../brythonlib/cs1media'
 import { hasCs1media } from '../utils/code'
 import { getFilesWithImageProps } from '../utils/image-conv'
@@ -205,6 +206,14 @@ export default {
                     showPicture(screenElement, value)
                 })
             }
+            const initCanvasDrawHelper = () => {
+                enableScreen(screenElement => {
+                    this.canvasDrawHelper = new CanvasDrawHelper(screenElement)
+                })
+            }
+            const drawCanvas = task => {
+                this.canvasDrawHelper.draw(task)
+            }
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
@@ -251,6 +260,14 @@ export default {
 
                         case 'screen.cs1media.show':
                             showPictureOnScreen(value)
+                            break
+
+                        case 'screen.cs1graphics.init':
+                            initCanvasDrawHelper()
+                            break
+
+                        case 'screen.cs1graphics.draw':
+                            drawCanvas(value)
                             break
 
                         default:
