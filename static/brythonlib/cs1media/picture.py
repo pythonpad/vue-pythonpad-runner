@@ -26,12 +26,14 @@ class Picture(object):
         return self.show()
 
     def show(self):
+        print('Rendering the picture...')
         picture_dict = {
             'width': self.width,
             'height': self.height,
             'imageData': self.data,
         }
-        browser.self.sendMsg('screen.cs1media.show', json.dumps(picture_dict))
+        browser.self.sendMsg('screen.cs1media.show', picture_dict)
+        print('Done.')
 
     def set_pixels(self, color=(0,0,0)):
         pixel = [v for v in sanitize(color)] + [1]
@@ -44,7 +46,7 @@ class Picture(object):
         return self.title
 
     def get_index(self, x, y):
-        return (y * width * 4) + (x * 4)
+        return (y * self.width * 4) + (x * 4)
 
     def get(self, x, y):
         start = self.get_index(x, y)

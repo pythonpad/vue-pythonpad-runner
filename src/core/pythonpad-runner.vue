@@ -239,6 +239,7 @@ export default {
                     },
                 },
                 onMsg(type, value) {
+                    console.log('onMsg', type, value)
                     switch (type) {
                         case 'screen.cs1robot.init':
                             initRobotDrawHelper()
