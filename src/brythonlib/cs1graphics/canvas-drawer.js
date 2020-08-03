@@ -65,23 +65,22 @@ export default class CanvasDrawer {
     }
 
     setDrawableAttributes(el, drawable) {
-        el.setAttributeNS(null, 'x', drawable.x - (drawable.width / 2))
-        el.setAttributeNS(null, 'y', drawable.y - (drawable.height / 2))
-        el.setAttributeNS(null, 'height', drawable.height)
-        el.setAttributeNS(null, 'width', drawable.width)
-        el.setAttributeNS(null, 'fill', this.sanitizeColor(drawable.fillColor))
-        el.setAttributeNS(null, 'stroke', this.sanitizeColor(drawable.borderColor))
-        el.setAttributeNS(null, 'stroke-width', this.sanitizeColor(drawable.borderWidth))
-        const transforms = []
-        if (drawable.rotateAngle !== 0) {
-            const rotatex = drawable.x + drawable.refx
-            const rotatey = drawable.y + drawable.refy
-            transforms.push(`rotate(${drawable.rotateAngle} ${rotatex} ${rotatey})`)
+        if (drawable.type === 'rectangle') {
+            el.setAttributeNS(null, 'height', drawable.height)
+            el.setAttributeNS(null, 'width', drawable.width)
         }
-        if (transforms) {
-            el.setAttributeNS(null, 'transform', transforms.join(' '))
+        el.setAttributeNS(null, 'x', drawable.initx)
+        el.setAttributeNS(null, 'y', drawable.inity)
+        if (drawable.fillColor) {
+            el.setAttributeNS(null, 'fill', this.sanitizeColor(drawable.fillColor))
         }
-        // scaleFactor, flipAngle, depth, centerx, centery
+        if (drawable.borderColor) {
+            el.setAttributeNS(null, 'stroke', this.sanitizeColor(drawable.borderColor))
+        }
+        if (drawable.borderWidth) {
+            el.setAttributeNS(null, 'stroke-width', this.sanitizeColor(drawable.borderWidth))
+        }
+        el.setAttributeNS(null, 'transform', drawable.transform)
     }
 
     onAdd(task) {

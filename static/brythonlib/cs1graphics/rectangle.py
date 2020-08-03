@@ -5,6 +5,8 @@ class Rectangle(FillableShape):
         FillableShape.__init__(self)
         self.width = w
         self.height = h
+        self.initx = -w / 2
+        self.inity = -h / 2
         if centerPt is not None:
             self.centerx = centerPt.getX()
             self.centery = centerPt.getY()

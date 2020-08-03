@@ -10,7 +10,7 @@ class JsonDrawer(object):
         print(s)
 
     def print_dict(self, out_dict):
-        self.print(json.dumps(out_dict))
+        self.print(out_dict)
 
     def flush(self):
         while self.task_queue:

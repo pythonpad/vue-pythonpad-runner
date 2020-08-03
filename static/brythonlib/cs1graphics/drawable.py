@@ -1,4 +1,6 @@
 from .event_trigger import _EventTrigger
+from .point import Point
+from .transform import Transform
 from .store import create_uid
 
 class Drawable(_EventTrigger):
@@ -8,27 +10,27 @@ class Drawable(_EventTrigger):
         if reference is not None:
             self.refx = reference.getX()
             self.refy = reference.getY()
+        self.initx = 0
+        self.inity = 0
         self.refx = 0
         self.refy = 0
         self.x = 0
         self.y = 0
-        self.rotateAngle = 0
-        self.scaleFactor = 1
-        self.flipAngle = 0
         self.depth = 0
+        self.transform = Transform()
         self.container = None
 
     def draw(self):
         return {
             'id': self.id,
+            'initx': self.initx,
+            'inity': self.inity,
             'refx': self.refx,
             'refy': self.refy,
             'x': self.x,
             'y': self.y,
-            'rotateAngle': self.rotateAngle,
-            'scaleFactor': self.scaleFactor,
-            'flipAngle': self.flipAngle,
             'depth': self.depth,
+            'transform': self.transform.to_matrix_string()
         }
 
     def on_add(self, container):
@@ -46,39 +48,72 @@ class Drawable(_EventTrigger):
     def clone(self):
         pass
 
-    def flip(self, angle=0):
-        pass
+    def setDepth(self, depth):
+        self.depth = depth
+        self.update()
 
     def getDepth(self):
         return self.depth
 
     def getReferencePoint(self):
-        return Point(refx, refy)
+        return Point(self.refx, self.refy)
+
+    def getRefTransform(self):
+        return Transform.translate(self.x + self.refx, self.y + self.refy)
+
+    def getInvRefTransform(self):
+        return Transform.translate(-self.x - self.refx, -self.y - self.refy)
+
+    def applyTransformWithRef(self, transform):
+        self.transform = (
+            self.getRefTransform() *
+            transform *
+            self.getInvRefTransform() *
+            self.transform
+        )
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        self.transform = Transform.translate(dx, dy) * self.transform
         self.update()
 
     def moveTo(self, x, y):
+        dx = x - self.x
+        dy = y - self.y
         self.x = x
         self.y = y
+        self.transform = Transform.translate(dx, dy) * self.transform
         self.update()
 
     def rotate(self, angle):
-        self.rotateAngle = angle
+        self.applyTransformWithRef(Transform.rotateAngle(angle))
         self.update()
 
     def scale(self, factor):
-        self.scaleFactor = factor
+        self.applyTransformWithRef(Transform.scale(factor, factor))
         self.update()
 
-    def setDepth(self, depth):
-        self.depth = depth
+    def stretch(self, xFactor, yFactor, angle=0):
+        self.applyTransformWithRef(
+            Transform.rotateAngle(angle) *
+            Transform.scale(xFactor, yFactor) *
+            Transform.rotateAngle(-angle)
+        )
         self.update()
 
     def shear(self, shear, angle=0):
-        raise NotImplementedError('This function is not implemented yet.')
+        self.applyTransformWithRef(
+            Transform.rotateAngle(angle) *
+            Transform.shear(shear) *
+            Transform.rotateAngle(-angle)
+        )
+        self.update()
 
-    def stretch(self, shear, angle=0):
-        raise NotImplementedError('This function is not implemented yet.')
+    def flip(self, angle=0):
+        self.applyTransformWithRef(
+            Transform.rotateAngle(angle) *
+            Transform.flip() *
+            Transform.rotateAngle(-angle)
+        )
+        self.update()

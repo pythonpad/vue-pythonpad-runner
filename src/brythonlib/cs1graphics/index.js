@@ -6,6 +6,6 @@ export default class CanvasDrawHelper {
     }
 
     draw(msg) {
-        this.drawer.onTask(JSON.parse(msg))
+        this.drawer.onTask(msg)
     }
 }
