@@ -34,8 +34,13 @@ export default class CanvasDrawer {
             } else if (color.length === 4) {
                 return `rgba(${color.join(',')})`
             }
-        } else if (colors[color]) {
-            return `rgb(${colors[color].join(',')})`
+        } else {
+            try {
+                const colorName = color.toLowerCase().replace(/ /g, '')
+                if (colors[colorName]) {
+                    return `rgb(${colors[colorName].join(',')})`
+                }
+            } catch (err) {}
         }
         return color
     }
