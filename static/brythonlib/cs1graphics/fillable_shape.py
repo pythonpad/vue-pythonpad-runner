@@ -3,7 +3,7 @@ from .shape import Shape
 class FillableShape(Shape):
     def __init__(self, reference=None):
         Shape.__init__(self, reference)
-        self.fillColor = (0, 0, 0, 0)
+        self.fillColor = 'transparent'
 
     def draw(self):
         d = Shape.draw(self)

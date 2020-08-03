@@ -1,7 +1,8 @@
 from .fillable_shape import FillableShape
 from .point import Point
 
-class Rectangle(FillableShape):
+
+class Ellipse(FillableShape):
     def __init__(self, w=20, h=10, centerPt=None):
         if not isinstance(w, (int, float)):
             raise TypeError('width must be numeric')
@@ -17,14 +18,12 @@ class Rectangle(FillableShape):
         FillableShape.__init__(self)
         self.width = w
         self.height = h
-        self.initx = -w / 2
-        self.inity = -h / 2
         if centerPt is not None:
             self.moveTo(centerPt.getX(), centerPt.getY())
 
     def draw(self):
         d = FillableShape.draw(self)
-        d['type'] = 'rectangle'
+        d['type'] = 'ellipse'
         d['width'] = self.width
         d['height'] = self.height
         return d

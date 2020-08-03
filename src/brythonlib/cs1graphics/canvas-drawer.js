@@ -57,20 +57,51 @@ export default class CanvasDrawer {
     getTagNameByDrawableType(dtype) {
         switch (dtype) {
             case 'rectangle':
+            case 'square':
                 return 'rect'
-        
+
+            case 'circle':
+                return 'circle'
+
+            case 'ellipse':
+                return 'ellipse'
+
+            case 'path':
+                return 'path'
+
             default:
                 return 'rect'
         }
     }
 
     setDrawableAttributes(el, drawable) {
-        if (drawable.type === 'rectangle') {
-            el.setAttributeNS(null, 'height', drawable.height)
-            el.setAttributeNS(null, 'width', drawable.width)
+        switch (drawable.type) {
+            case 'rectangle':
+            case 'square':
+                el.setAttributeNS(null, 'x', drawable.initx)
+                el.setAttributeNS(null, 'y', drawable.inity)
+                el.setAttributeNS(null, 'height', drawable.height)
+                el.setAttributeNS(null, 'width', drawable.width)    
+                break
+
+            case 'circle':
+                el.setAttributeNS(null, 'cx', 0)   
+                el.setAttributeNS(null, 'cy', 0)   
+                el.setAttributeNS(null, 'r', drawable.radius)   
+                break
+
+            case 'ellipse':
+                el.setAttributeNS(null, 'cx', 0)
+                el.setAttributeNS(null, 'cy', 0)
+                el.setAttributeNS(null, 'rx', drawable.width / 2)
+                el.setAttributeNS(null, 'ry', drawable.height / 2)
+                break
+
+            case 'path':
+                el.setAttributeNS(null, 'd', drawable.d)
+                break
+
         }
-        el.setAttributeNS(null, 'x', drawable.initx)
-        el.setAttributeNS(null, 'y', drawable.inity)
         if (drawable.fillColor) {
             el.setAttributeNS(null, 'fill', this.sanitizeColor(drawable.fillColor))
         }
@@ -85,7 +116,7 @@ export default class CanvasDrawer {
 
     onAdd(task) {
         const tagName = this.getTagNameByDrawableType(task.drawable.type)
-        const el = document.createElementNS(SVGNS, 'rect')
+        const el = document.createElementNS(SVGNS, tagName)
         el.id = `d${task.drawable.id}`
         this.setDrawableAttributes(el, task.drawable)
         this.elements[task.container_id].appendChild(el)
