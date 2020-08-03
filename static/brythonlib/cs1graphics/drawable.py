@@ -36,9 +36,12 @@ class Drawable(_EventTrigger):
     def on_add(self, container):
         self.container = container
 
+    def on_remove(self, container):
+        self.container = None
+
     def update(self):
         if self.container:
-            self.container.drawer.on_edit(self)
+            self.container.on_edit(self)
 
     def adjustReference(self, dx, dy):
         self.refx += dx

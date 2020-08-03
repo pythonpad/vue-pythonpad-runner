@@ -4,6 +4,9 @@ from .rectangle import Rectangle
 from .square import Square
 from .circle import Circle
 from .ellipse import Ellipse
+from .path import Path
+from .polygon import Polygon
+from .layer import Layer
 
 __all__ = [
     'Canvas',
@@ -12,4 +15,7 @@ __all__ = [
     'Square',
     'Circle',
     'Ellipse',
+    'Path',
+    'Polygon',
+    'Layer',
 ]

@@ -1,3 +1,5 @@
+import colors from './colors'
+
 const SVGNS = 'http://www.w3.org/2000/svg'
 
 export default class CanvasDrawer {
@@ -24,34 +26,18 @@ export default class CanvasDrawer {
     }
 
     sanitizeColor(color) {
-        if (Array.isArray(color)) {
+        if (color === null) {
+            return 'transparent'
+        } else if (Array.isArray(color)) {
             if (color.length === 3) {
                 return `rgb(${color.join(',')})`
             } else if (color.length === 4) {
                 return `rgba(${color.join(',')})`
             }
+        } else if (colors[color]) {
+            return `rgb(${colors[color].join(',')})`
         }
         return color
-    }
-
-    onCreateCanvas(task) {
-        this.canvasObject = task.canvas
-        this.svgElement = document.createElementNS(SVGNS, 'svg')
-        this.svgElement.setAttributeNS(null, 'viewBox', `0 0 ${task.canvas.width} ${task.canvas.height}`)
-        this.svgElement.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet')
-        const styles = {
-            'width': `${task.canvas.width}px`,
-            'height': `${task.canvas.height}px`,
-            'max-width': '100%',
-            'max-height': '100%',
-            'flex': '0 0 auto',
-            'background-color': this.sanitizeColor(task.canvas.bgColor),
-        }
-        const styleString = Object.entries(styles).map(kv => `${kv[0]}:${kv[1]}`).join(';')
-        this.svgElement.setAttributeNS(null, 'style', styleString)
-        this.innerContainerElement.appendChild(this.svgElement)
-        this.objects[task.canvas.id] = task.canvas
-        this.elements[task.canvas.id] = this.svgElement
     }
 
     getTagNameByDrawableType(dtype) {
@@ -67,7 +53,11 @@ export default class CanvasDrawer {
                 return 'ellipse'
 
             case 'path':
+            case 'polygon':
                 return 'path'
+
+            case 'layer':
+                return 'g'
 
             default:
                 return 'rect'
@@ -98,6 +88,7 @@ export default class CanvasDrawer {
                 break
 
             case 'path':
+            case 'polygon':
                 el.setAttributeNS(null, 'd', drawable.d)
                 break
 
@@ -114,6 +105,41 @@ export default class CanvasDrawer {
         el.setAttributeNS(null, 'transform', drawable.transform)
     }
 
+    setCanvasAttributes(el, canvas) {
+        el.setAttributeNS(null, 'viewBox', `0 0 ${canvas.width} ${canvas.height}`)
+        el.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet')
+        const styles = {
+            'width': `${canvas.width}px`,
+            'height': `${canvas.height}px`,
+            'max-width': '100%',
+            'max-height': '100%',
+            'flex': '0 0 auto',
+            'background-color': this.sanitizeColor(canvas.bgColor),
+        }
+        const styleString = Object.entries(styles).map(kv => `${kv[0]}:${kv[1]}`).join(';')
+        el.setAttributeNS(null, 'style', styleString)
+    }
+
+    onCreateCanvas(task) {
+        this.canvasObject = task.canvas
+        this.svgElement = document.createElementNS(SVGNS, 'svg')
+        this.setCanvasAttributes(this.svgElement, task.canvas)
+        this.innerContainerElement.appendChild(this.svgElement)
+        this.objects[task.canvas.id] = task.canvas
+        this.elements[task.canvas.id] = this.svgElement
+    }
+
+    onRemoveCanvas(task) {
+        this.innerContainerElement.removeChild(this.elements[this.canvasObject.id])
+        delete this.objects[this.canvasObject.id]
+        delete this.elements[this.canvasObject.id]
+    }   
+
+    onEditCanvas(task) {
+        const el = this.elements[task.canvas.id]
+        this.setCanvasAttributes(el, task.canvas)
+    }
+
     onAdd(task) {
         const tagName = this.getTagNameByDrawableType(task.drawable.type)
         const el = document.createElementNS(SVGNS, tagName)
@@ -124,20 +150,37 @@ export default class CanvasDrawer {
         this.elements[task.drawable.id] = el
     }
 
+    onRemove(task) {
+        this.elements[task.container_id].removeChild(this.elements[task.drawable_id])
+        delete this.objects[task.drawable_id]
+        delete this.elements[task.drawable_id]
+    }
+
     onEdit(task) {
         const el = this.elements[task.drawable.id]
         this.setDrawableAttributes(el, task.drawable)
     }
 
     onTask(task) {
-        console.log('TASK', task)
         switch(task.task) {
             case 'create_canvas':
                 this.onCreateCanvas(task)
                 break
 
+            case 'remove_canvas':
+                this.onRemoveCanvas(task)
+                break
+            
+            case 'edit_canvas':
+                this.onEditCanvas(task)
+                break
+
             case 'add':
                 this.onAdd(task)
+                break
+
+            case 'remove':
+                this.onRemove(task)
                 break
 
             case 'edit':

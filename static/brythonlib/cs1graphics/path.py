@@ -11,7 +11,7 @@ class Path(Shape):
                 raise TypeError('non-Point specified as parameter')
 
         self.points = list(points)
-        self.close = False
+        self.closePath = False
         if len(self.points) >= 1:
             self.adjustReference(self.points[0].getX(), self.points[0].getY())
 
@@ -27,7 +27,7 @@ class Path(Shape):
         for point in self.points:
             coords.append('%s%s %s' % (cmd, point.getX(), point.getY()))
             cmd = 'L'
-        if self.close:
+        if self.closePath:
             coords.append('Z')
         return ' '.join(coords)
 
