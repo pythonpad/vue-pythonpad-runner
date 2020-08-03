@@ -36,9 +36,11 @@ class Rectangle(FillableShape):
         return self.width
 
     def setHeight(self, h):
+        self.inity = -h / 2
         self.height = h
         self.update()
 
     def setWidth(self, w):
+        self.initx = -w / 2
         self.width = w
         self.update()
