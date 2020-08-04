@@ -15,6 +15,15 @@ class Path(Shape):
         if len(self.points) >= 1:
             self.adjustReference(self.points[0].getX(), self.points[0].getY())
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.points = self.points.copy()
+        drawable.closePath = self.closePath
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Shape.draw(self)
         d['type'] = 'path'

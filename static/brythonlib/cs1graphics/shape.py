@@ -6,6 +6,15 @@ class Shape(Drawable):
         self.borderColor = (0, 0, 0)
         self.borderWidth = 1
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.borderColor = self.borderColor
+        drawable.borderWidth = self.borderWidth
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Drawable.draw(self)
         d['borderColor'] = self.borderColor

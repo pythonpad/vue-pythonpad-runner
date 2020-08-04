@@ -6,6 +6,13 @@ class Layer(Drawable, _GraphicsContainer):
         Drawable.__init__(self)
         _GraphicsContainer.__init__(self)
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Drawable.draw(self)
         d['type'] = 'layer'

@@ -23,6 +23,14 @@ class Image(Drawable):
         if not browser.self.isFileExist(self.filename):
             raise ValueError('unable to load image file: ' + self.filename)
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.filename = self.filename
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Drawable.draw(self)
         d['type'] = 'image'

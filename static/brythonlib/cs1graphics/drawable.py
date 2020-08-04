@@ -20,6 +20,23 @@ class Drawable(_EventTrigger):
         self.transform = Transform()
         self.container = None
 
+    def __deepcopy__(self, memo={}):
+        drawable = self.__class__.__new__(self.__class__)
+        drawable.id = create_uid(drawable)
+        drawable.initx = self.initx
+        drawable.inity = self.inity
+        drawable.refx = self.refx
+        drawable.refy = self.refy
+        drawable.x = self.x
+        drawable.y = self.y
+        drawable.depth = self.depth
+        drawable.transform = self.transform
+        drawable.container = None
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         return {
             'id': self.id,

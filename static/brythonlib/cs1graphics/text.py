@@ -22,6 +22,18 @@ class Text(Drawable):
         self.inity = -self.getRenderedHeight() / 2
         if centerPt:
             self.move(centerPt.getX(), centerPt.getY())
+    
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.text = self.text
+        drawable.size = self.size
+        drawable.color = self.color
+        drawable.initx = self.initx
+        drawable.inity = self.inity
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
 
     def draw(self):
         d = Drawable.draw(self)

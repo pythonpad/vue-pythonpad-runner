@@ -5,6 +5,14 @@ class FillableShape(Shape):
         Shape.__init__(self, reference)
         self.fillColor = 'transparent'
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.fillColor = self.fillColor
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Shape.draw(self)
         d['fillColor'] = self.fillColor

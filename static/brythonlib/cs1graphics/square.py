@@ -12,6 +12,13 @@ class Square(Rectangle):
 
         Rectangle.__init__(self, size, size, centerPt)
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = Rectangle.draw(self)
         d['type'] = 'square'
@@ -28,6 +35,7 @@ class Square(Rectangle):
 
         Rectangle.setWidth(self, s)
         Rectangle.setHeight(self, s)
+        self.update()
 
     def setWidth(self, w):
         if not isinstance(w, (int, float)):
@@ -35,6 +43,7 @@ class Square(Rectangle):
         if w <= 0:
             raise ValueError("width must be positive")
         self.setSize(w)
+        self.update()
 
     def setHeight(self, h):
         if not isinstance(h, (int, float)):
@@ -42,3 +51,4 @@ class Square(Rectangle):
         if h <= 0:
             raise ValueError("height must be positive")
         self.setSize(h)
+        self.update()

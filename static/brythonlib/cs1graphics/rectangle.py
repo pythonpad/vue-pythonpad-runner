@@ -22,6 +22,17 @@ class Rectangle(FillableShape):
         if centerPt is not None:
             self.moveTo(centerPt.getX(), centerPt.getY())
 
+    def __deepcopy__(self, memo={}):
+        drawable = super().__deepcopy__()
+        drawable.width = self.width
+        drawable.height = self.height
+        drawable.initx = self.initx
+        drawable.inity = self.inity
+        return drawable
+
+    def clone(self):
+        return self.__deepcopy__()
+
     def draw(self):
         d = FillableShape.draw(self)
         d['type'] = 'rectangle'
