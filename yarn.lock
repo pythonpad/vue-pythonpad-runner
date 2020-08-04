@@ -1538,11 +1538,12 @@ browserslist@^4.12.0, browserslist@^4.8.5:
     escalade "^3.0.1"
     node-releases "^1.1.58"
 
-"brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.17":
+"brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.18":
   version "1.0.0"
-  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#eeafb01a9f634cd4bd33322481e28bf52c867ca6"
+  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#c6e893e7677a48cb5a16c1f1e0f4667115b3e3c2"
   dependencies:
     raw-loader "^4.0.1"
+    worker-loader "^3.0.0"
 
 buffer-equal@^1.0.0:
   version "1.0.0"
@@ -6180,6 +6181,14 @@ worker-farm@^1.7.0:
   integrity sha512-rvw3QTZc8lAxyVrqcSGVm5yP/IJ2UcB3U0graE3LCFoZ0Yn2x4EoVSqJKdB/T5M+FLcRPjz4TDacRf3OCfNUzw==
   dependencies:
     errno "~0.1.7"
+
+worker-loader@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/worker-loader/-/worker-loader-3.0.0.tgz#4256b6ea9715ad3e0d39ad2d4b58e5fef49b06da"
+  integrity sha512-TNDhyNxUfOGkxNDH28bkrfS4d2BSKYtc3Jznkhhpra9q3p5Su9mRD9Rso5uUNCK6vsEdlceTCJ7aMcluJAotZw==
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^2.7.0"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"
