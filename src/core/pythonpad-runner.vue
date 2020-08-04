@@ -116,6 +116,9 @@ import CanvasDrawHelper from '../brythonlib/cs1graphics/index'
 import { showPicture } from '../brythonlib/cs1media'
 import { hasCs1media } from '../utils/code'
 import { getFilesWithImageProps } from '../utils/image-conv'
+import robotsModule from '!!raw-loader!../modules/cs1robots.brython.js'
+import mediaModule from '!!raw-loader!../modules/cs1media.brython.js'
+import graphicsModule from '!!raw-loader!../modules/cs1graphics.brython.js'
 import './common.css'
 
 const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
@@ -235,6 +238,11 @@ export default {
                 files: {},
                 paths: [
                     `${this.staticUrl}/brythonlib`,
+                ],
+                postInitModules: [
+                    robotsModule,
+                    mediaModule,
+                    graphicsModule,
                 ],
                 stdout: {
                     write(content) {

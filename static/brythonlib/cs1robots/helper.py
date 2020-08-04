@@ -51,8 +51,8 @@ def get_all_beepers_dict():
 class Robot(GeneralRobot):
     def __init__(self, avenue=None, street=None, orientation=None, beepers=0):
         global __robot__
-        row = (street - 1) if street is not None else 1
-        column = (avenue - 1) if avenue is not None else 1
+        row = (street - 1) if street is not None else 0
+        column = (avenue - 1) if avenue is not None else 0
         direction = orientation if orientation is not None else 'E'
         super().__init__(position=Position(column, row), direction=Direction(direction), beepers=beepers)
         __robot__['world'].add_piece(self)
