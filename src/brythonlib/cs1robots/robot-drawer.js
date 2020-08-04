@@ -347,8 +347,7 @@ export default class RobotDrawer {
         }
     }
 
-    onTask(taskMessage) {
-        const task = JSON.parse(taskMessage);
+    onTask(task) {
         this.processTask(task);
     }
 

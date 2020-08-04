@@ -10,7 +10,7 @@ class JsonDrawer(Drawer):
         print(s)
 
     def print_dict(self, out_dict):
-        self.print(json.dumps(out_dict))
+        self.print(out_dict)
     
     def draw(self, width, height, pieces, walls):
         self.print_dict({
