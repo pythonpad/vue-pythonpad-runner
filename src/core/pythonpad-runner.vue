@@ -109,6 +109,7 @@ import Editor from './editor'
 import FileBrowser from './file-browser'
 import FileViewer from './file-viewer'
 import Toolbar from './toolbar'
+import { errorDataUrl, isImageFilename, toDataUrl } from '../utils/image-conv'
 import Phrase from '../i18n/phrase'
 import RobotDrawHelper from '../brythonlib/cs1robots/index'
 import CanvasDrawHelper from '../brythonlib/cs1graphics/index'
@@ -212,6 +213,19 @@ export default {
                 })
             }
             const drawCanvas = task => {
+                if (task.drawable && task.drawable.type === 'image') {
+                    // Augment drawable with data URL when drawing an image.
+                    if (!isImageFilename(task.drawable.filename)) {
+                        task.drawable.dataUrl = errorDataUrl
+                        pushMessage({
+                            type: 'output',
+                            outputType: 'stderr',
+                            body: `unable to load image file: ${task.drawable.filename}`,
+                        })
+                    } else {
+                        task.drawable.dataUrl = toDataUrl(task.drawable.filename, this.files[task.drawable.filename].body)
+                    }
+                }
                 this.canvasDrawHelper.draw(task)
             }
             const options = {

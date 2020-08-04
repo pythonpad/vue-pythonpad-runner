@@ -67,6 +67,9 @@ export default class CanvasDrawer {
             case 'text':
                 return 'text'
 
+            case 'image':
+                return 'image'
+
             default:
                 return 'rect'
         }
@@ -119,7 +122,19 @@ export default class CanvasDrawer {
                     lineEl.appendChild(document.createTextNode(lines[i]))
                     el.appendChild(lineEl)
                 }
-
+                break
+            
+            case 'image':
+                const image = new Image()
+                image.onload = () => {
+                    el.setAttributeNS(null, 'x', -image.width / 2)
+                    el.setAttributeNS(null, 'y', -image.height / 2)
+                    el.setAttributeNS(null, 'width', image.width)
+                    el.setAttributeNS(null, 'height', image.height)
+                    el.setAttributeNS(null, 'href', drawable.dataUrl)
+                }
+                image.src = drawable.dataUrl
+                break
         }
         if (drawable.fillColor) {
             el.setAttributeNS(null, 'fill', this.sanitizeColor(drawable.fillColor))

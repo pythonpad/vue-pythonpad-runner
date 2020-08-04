@@ -10,6 +10,7 @@ from .layer import Layer
 from .text import Text
 from .button import Button
 from .text_box import TextBox
+from .image import Image
 
 __all__ = [
     'Canvas',
@@ -24,4 +25,5 @@ __all__ = [
     'Text',
     'Button',
     'TextBox',
+    'Image',
 ]
