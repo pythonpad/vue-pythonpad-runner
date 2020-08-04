@@ -313,7 +313,7 @@ export default {
         handleFileKeyChange(fileKey) {
             this.activeFileKey = fileKey
         },
-        handleSave() {
+        handleSave(options = {}) {
             if (this.isFilesTooBig || this.isSaved) {
                 return
             }
@@ -331,6 +331,9 @@ export default {
             }
             if (!this.isFilesSaved) {
                 saveObj.files = this.files
+            }
+            if (options.autosave) {
+                saveObj.autosave = true
             }
             this.isSaving = true
             this.$emit('save', saveObj, done, error)
@@ -403,7 +406,7 @@ export default {
                 })
             }
             if (!this.isFilesSaved) {
-                this.handleSave()
+                this.handleSave({ autosave: true })
             }
         },
         stopRunning() {
