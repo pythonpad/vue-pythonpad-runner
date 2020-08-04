@@ -64,12 +64,17 @@ export default class CanvasDrawer {
             case 'layer':
                 return 'g'
 
+            case 'text':
+                return 'text'
+
             default:
                 return 'rect'
         }
     }
 
     setDrawableAttributes(el, drawable) {
+        const styles = {}
+        const getStyleString = () => Object.entries(styles).map(kv => `${kv[0]}:${kv[1]}`).join(';')
         switch (drawable.type) {
             case 'rectangle':
             case 'square':
@@ -96,6 +101,24 @@ export default class CanvasDrawer {
             case 'polygon':
                 el.setAttributeNS(null, 'd', drawable.d)
                 break
+
+            case 'text':
+                styles['fill'] = this.sanitizeColor(drawable.color)
+                styles['font-size'] = `${drawable.size}px`
+                el.setAttributeNS(null, 'style', getStyleString())
+                el.setAttributeNS(null, 'x', drawable.initx)
+                el.setAttributeNS(null, 'y', drawable.inity)
+                while (el.firstChild) {
+                    el.removeChild(el.lastChild);
+                }
+                const lines = drawable.text.split('\n')
+                for (let i = 0; i < lines.length; i++) {
+                    const lineEl = document.createElementNS(SVGNS, 'tspan')
+                    lineEl.setAttributeNS(null, 'x', drawable.initx)
+                    lineEl.setAttributeNS(null, 'y', drawable.inity + (drawable.size * i))
+                    lineEl.appendChild(document.createTextNode(lines[i]))
+                    el.appendChild(lineEl)
+                }
 
         }
         if (drawable.fillColor) {

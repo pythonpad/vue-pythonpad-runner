@@ -7,6 +7,9 @@ from .ellipse import Ellipse
 from .path import Path
 from .polygon import Polygon
 from .layer import Layer
+from .text import Text
+from .button import Button
+from .text_box import TextBox
 
 __all__ = [
     'Canvas',
@@ -18,4 +21,7 @@ __all__ = [
     'Path',
     'Polygon',
     'Layer',
+    'Text',
+    'Button',
+    'TextBox',
 ]
