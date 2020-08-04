@@ -16,7 +16,7 @@ class Drawable(_EventTrigger):
         self.refy = 0
         self.x = 0
         self.y = 0
-        self.depth = 0
+        self.depth = 50
         self.transform = Transform()
         self.container = None
 
@@ -30,7 +30,7 @@ class Drawable(_EventTrigger):
             'x': self.x,
             'y': self.y,
             'depth': self.depth,
-            'transform': self.transform.to_matrix_string()
+            'transform': self.transform.to_matrix_string(),
         }
 
     def on_add(self, container):

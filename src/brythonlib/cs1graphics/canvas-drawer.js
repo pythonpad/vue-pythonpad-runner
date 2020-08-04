@@ -170,6 +170,7 @@ export default class CanvasDrawer {
         this.innerContainerElement.appendChild(this.svgElement)
         this.objects[task.canvas.id] = task.canvas
         this.elements[task.canvas.id] = this.svgElement
+        this.objects[task.canvas.id].children = []
     }
 
     onRemoveCanvas(task) {
@@ -181,6 +182,40 @@ export default class CanvasDrawer {
     onEditCanvas(task) {
         const el = this.elements[task.canvas.id]
         this.setCanvasAttributes(el, task.canvas)
+        this.objects[task.canvas.id] = {
+            ...task.canvas,
+            parent: this.objects[task.canvas.id].parent, // Preserve the parent.
+            children: this.objects[task.canvas.id].children, // Preserve children.
+        }
+    }
+
+    insertElement(containerId, drawableId) {
+        const drawable = this.objects[drawableId]
+        const drawableEl = this.elements[drawableId]
+        const shallowChildren = this.objects[containerId].children
+            .filter(c => {
+                if (c.depth < drawable.depth) {
+                    return true
+                } else if (c.depth === drawable.depth) {
+                    if (c.id > drawable.id) {
+                        return true
+                    }
+                }
+                return false
+            })
+        if (shallowChildren.length === 0) {
+            this.elements[containerId].appendChild(drawableEl)
+        } else {
+            shallowChildren.sort((a, b) => {
+                if (a.depth !== b.depth) {
+                    return b.depth - a.depth
+                } else {
+                    return a.id - b.id
+                }
+            })
+            const deepestShallowerChildEl = this.elements[shallowChildren[0].id]
+            this.elements[containerId].insertBefore(drawableEl, deepestShallowerChildEl)
+        }
     }
 
     onAdd(task) {
@@ -188,20 +223,40 @@ export default class CanvasDrawer {
         const el = document.createElementNS(SVGNS, tagName)
         el.id = `d${task.drawable.id}`
         this.setDrawableAttributes(el, task.drawable)
-        this.elements[task.container_id].appendChild(el)
+        this.objects[task.container_id].children.push(task.drawable)
+        task.drawable.parent = this.objects[task.container_id]
         this.objects[task.drawable.id] = task.drawable
         this.elements[task.drawable.id] = el
+        if (this.objects[task.drawable.id].type === 'layer') {
+            // Add "children" prop to layer when added.
+            this.objects[task.drawable.id].children = []
+        }
+        this.insertElement(task.container_id, task.drawable.id)
     }
 
     onRemove(task) {
         this.elements[task.container_id].removeChild(this.elements[task.drawable_id])
+        this.objects[task.container_id].children = (
+            this.objects[task.container_id].children
+                .filter(obj => obj.id !== task.drawable_id)
+        )
         delete this.objects[task.drawable_id]
         delete this.elements[task.drawable_id]
     }
 
     onEdit(task) {
         const el = this.elements[task.drawable.id]
+        const isDepthChanged = this.objects[task.drawable.id].depth !== task.drawable.depth
         this.setDrawableAttributes(el, task.drawable)
+        this.objects[task.drawable.id] = {
+            ...task.drawable,
+            parent: this.objects[task.drawable.id].parent, // Preserve the parent.
+            children: this.objects[task.drawable.id].children, // Preserve children.
+        }
+        if (isDepthChanged) {
+            this.elements[this.objects[task.drawable.id].parent.id].removeChild(el)
+            this.insertElement(this.objects[task.drawable.id].parent.id, task.drawable.id)
+        }
     }
 
     onTask(task) {
