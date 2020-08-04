@@ -6,7 +6,7 @@ module.exports = mode => ({
     cache: true,
     mode: 'development',
     entry: {
-        'vue-pythonpad-runner.bundle': ['./src/browser.js'],
+        'vue-pythonpad-runner.bundle': mode === 'development' ? ['babel-polyfill', './src/browser.js'] : ['./src/browser.js'],
     },
     output: {
         path: path.join(__dirname, 'lib'),
@@ -50,6 +50,6 @@ module.exports = mode => ({
         hot: true,
         historyApiFallback: true,
         contentBase: '.',
-        publicPath: '/assets/',
+        publicPath: '/lib/',
     },
 });
