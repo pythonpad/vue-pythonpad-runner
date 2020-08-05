@@ -126,6 +126,24 @@ import './common.css'
 
 const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
 
+function loadFromStorage(key, defaultItem) {
+    const itemString = window.localStorage.getItem(key)
+    if (itemString === null) {
+        if (defaultItem) {
+            saveToStorage(key, JSON.stringify(defaultItem))
+            return defaultItem
+        } else {
+            return null
+        }
+    } else {
+        return JSON.parse(itemString)
+    }
+}
+
+function saveToStorage(key, item) {
+    return window.localStorage.setItem(key, JSON.stringify(item))
+}
+
 export default {
     name: 'pythonpad-runner',
     props: [
@@ -157,7 +175,7 @@ export default {
             isRunning: false,
             isGrading: false,
             isScreen: false,
-            isFileViewOpen: false,
+            isFileViewOpen: loadFromStorage('isFileViewOpen', false),
             isFilesTooBig: false,
             viewMode: 'basic',
             gettext: () => '',
@@ -479,6 +497,9 @@ export default {
         },
     },
     watch: {
+        isFileViewOpen(value, oldValue) {
+            saveToStorage('isFileViewOpen', value)
+        },
         viewMode(value, oldValue) {
             if (oldValue === 'editor' && value !== 'editor') {
                 this.$refs.console.scrollToBottom()
