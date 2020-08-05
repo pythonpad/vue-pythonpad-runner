@@ -10,7 +10,7 @@
                     <span>{{ gettext('preparing') }}</span>
                 </button>
                 <button 
-                    v-else-if="isRunning" 
+                    v-if="isRunning" 
                     class="tool-button is-warning"
                     @click="() => $emit('stop')"
                 >
@@ -18,12 +18,20 @@
                     <span>{{ gettext('stop') }}</span>
                 </button>
                 <button 
-                    v-else 
+                    v-if="isRunnerReady && !isRunning" 
                     class="tool-button is-primary"
                     @click="() => $emit('run')"
                 >
                     <i class="fa fa-play" ></i>
                     <span>{{ gettext('run') }}</span>
+                </button>
+                <button 
+                    v-if="isRunnerReady && !isRunning && isGradable" 
+                    class="tool-button is-success"
+                    @click="() => $emit('grade')"
+                >
+                    <i class="fa fa-check" ></i>
+                    <span>{{ gettext('grade') }}</span>
                 </button>
             </div>
             <div class="toolbar-group">
@@ -45,10 +53,14 @@
                     <span>{{ gettext('reset') }}</span>
                 </button> -->
             </div>
-            <div v-if="!isSaved" class="toolbar-group">
-                <div class="tool-label is-warning">
+            <div v-if="!isSaved || isPassed" class="toolbar-group">
+                <div v-if="!isSaved" class="tool-label is-warning">
                     <i class="fa fa-asterisk"></i>
                     <span>{{ gettext('edited') }}</span>
+                </div>
+                <div v-if="isPassed" class="tool-label is-success">
+                    <i class="fa fa-check"></i>
+                    <span>{{ gettext('passed') }}</span>
                 </div>
             </div>
         </div>
@@ -118,6 +130,8 @@ export default {
         'isSaved',
         'isFileViewOpen',
         'isFilesTooBig',
+        'isGradable',
+        'isPassed',
         'viewMode',
     ],
 }
@@ -148,7 +162,7 @@ export default {
     }
     .tool-label {
         display: inline-block;
-        padding: 0 0.5rem;
+        padding: 0 0.3rem;
         margin: 0.3rem 0.05rem;
         font-size: 0.8rem;
         color: #fff;
@@ -158,8 +172,11 @@ export default {
     .tool-label.is-warning {
         color: #b88b03;
     }
+    .tool-label.is-success {
+        color: #1db954;
+    }
     .tool-label .fa {
-        margin-right: 0.3rem;
+        margin-right: 0.2rem;
     }
     .tool-button {
         display: inline-block;
@@ -175,8 +192,11 @@ export default {
         height: 1.9rem;
         line-height: 1.9rem;
     }
+    .tool-button.is-success {
+        background-color: #1db954;
+    }
     .tool-button.is-primary {
-        background-color: #2B73F5;
+        background-color: #2b73f5;
     }
     .tool-button.is-warning {
         background-color: #b88b03;
@@ -189,6 +209,9 @@ export default {
     }
     .tool-button:not(.is-disabled):hover {
         background-color: #666666;
+    }
+    .tool-button.is-success:not(.is-disabled):hover {
+        background-color: #7db18e;
     }
     .tool-button.is-primary:not(.is-disabled):hover {
         background-color: #5991f8;

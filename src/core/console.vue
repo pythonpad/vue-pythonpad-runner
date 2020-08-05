@@ -18,7 +18,10 @@
                         <span 
                             v-else-if="message.type == 'output'"
                             class="console-text"  
-                            :class="{'error': message.outputType == 'stderr'}"
+                            :class="{
+                                'error': message.outputType == 'stderr',
+                                'grader': message.outputType == 'grader',
+                            }"
                             :key="i"
                         >{{message.body}}</span>
                         <span 
@@ -131,6 +134,9 @@ export default {
     }
     .error {
         color: #ff4444;
+    }
+    .grader {
+        color: #1db954;
     }
     .system {
         display: block;

@@ -1,14 +1,6 @@
 <template>
     <div class="editor fill">
         <div class="editor-container fill" ref="container"></div>
-        <!-- <div class="tool-box">
-            <button v-if="!isRunning" class="tool-button" @click="() => $emit('run')">
-                {{ gettext('runCode') }}
-            </button>
-            <button v-else class="tool-button warning" @click="() => $emit('stop')">
-                {{ gettext('stopRunning') }}
-            </button>
-        </div> -->
     </div>
 </template>
 <script>
@@ -16,7 +8,6 @@ import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/meta'
 import 'codemirror/mode/python/python'
 import 'codemirror/lib/codemirror.css'
-// import 'codemirror/theme/ayu-mirage.css'
 import 'codemirror/theme/nord.css'
 import 'codemirror/addon/comment/comment'
 import 'codemirror/keymap/sublime'

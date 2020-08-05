@@ -18,6 +18,22 @@
             </div>
             <div>
                 <button 
+                    v-if="showHiddenFile"
+                    class="tool-button"
+                    :class="{'is-disabled': isEditing}"
+                    @click="() => (showHiddenFile = false)"
+                >
+                    <i class="fa fa-eye-slash"></i>
+                </button>
+                <button 
+                    v-else
+                    class="tool-button"
+                    :class="{'is-disabled': isEditing}"
+                    @click="() => (showHiddenFile = true)"
+                >
+                    <i class="fa fa-eye"></i>
+                </button>
+                <button 
                     class="tool-button"
                     :class="{'is-disabled': isEditing || !activeFileKey || activeFileKey === 'main.py'}"
                     @click="handleRenameFile"
@@ -35,9 +51,13 @@
         </div>
         <div 
             class="files" 
+            :class="{
+                'is-dragged-over': isFileDraggedOver,
+            }"
             ref="files" 
             @drop.prevent="handleDropFile" 
-            @dragover.prevent
+            @dragover.prevent="handleDragoverFile"
+            @dragleave.prevent="handleDragleaveFile"
         >
             <div v-if="isEditing && !isDeletingFile" class="editor">
                 <i class="list-icon fa fa-file-o"></i>
@@ -77,7 +97,7 @@
                 :class="{
                     'main': fileKey === 'main.py',
                     'active': fileKey === activeFileKey,
-                    'is-hidden': fileKey === renamingFileKey,
+                    'is-hidden': fileKey === renamingFileKey || (!showHiddenFile && isHiddenFile(fileKey)),
                 }"
                 :key="fileKey"
                 @click="() => $emit('active-file-key-change', fileKey)"
@@ -111,16 +131,22 @@ export default {
     ],
     data() {
         return {
+            showHiddenFile: false,
             isCreatingFile: false,
             isRenamingFile: false,
             isDeletingFile: false,
             isAddingFile: false,
+            isFileDraggedOver: false,
             deletingFileKey: '',
             renamingFileKey: '',
             editorText: '',
         }
     },
     methods: {
+        isHiddenFile(fileKey) {
+            const tokens = fileKey.split('/')
+            return tokens[tokens.length - 1].startsWith('.')
+        },
         handleCreateFile() {
             if (this.isEditing) {
                 return
@@ -148,8 +174,14 @@ export default {
             }
             if (this.isCreatingFile) {
                 this.$emit('create-file', this.editorText)
+                if (this.isHiddenFile(this.editorText)) {
+                    this.showHiddenFile = true
+                }
             } else if (this.isRenamingFile) {
                 this.$emit('rename-file', this.renamingFileKey, this.editorText)
+                if (this.isHiddenFile(this.editorText)) {
+                    this.showHiddenFile = true
+                }
             } else if (this.isDeletingFile) {
                 this.$emit('delete-file', this.deletingFileKey)
             }
@@ -159,7 +191,6 @@ export default {
             this.closeEditor()  
         },
         async handleDropFile(e) {
-            console.log('dropfile', e.dataTransfer.files)
             const files = e.dataTransfer.files
             if (!files) {
                 return
@@ -203,8 +234,17 @@ export default {
                     }
                 } catch (err) {}
                 this.$emit('add-file', filename, { type, body })
+                if (this.isHiddenFile(filename)) {
+                    this.showHiddenFile = true
+                }
             }
             this.isAddingFile = false
+        },
+        handleDragoverFile() {
+            this.isFileDraggedOver = true
+        },
+        handleDragleaveFile() {
+            this.isFileDraggedOver = false
         },
         closeEditor() {
             this.isCreatingFile = false
@@ -290,7 +330,7 @@ export default {
         display: inline-block;
         border: 0;
         border-radius: 3px;
-        padding: 0 0.5rem;
+        padding: 0 0.35rem;
         margin: 0.2rem 0.05rem;
         background-color: #444444; /* primary-dark color */
         font-size: 0.8rem;
@@ -308,10 +348,14 @@ export default {
         cursor: not-allowed;
     }
     .files {
+        border: 2px solid transparent;
         padding: 0.2rem 0;
         width: 100%;
         height: 100%;
         overflow-y: auto;
+    }
+    .files.is-dragged-over {
+        border: 2px dashed #ffffff;
     }
     .file {
         display: block;

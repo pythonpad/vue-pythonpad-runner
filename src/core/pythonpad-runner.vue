@@ -10,7 +10,10 @@
                 :viewMode="viewMode"
                 :isFileViewOpen="isFileViewOpen"
                 :isFilesTooBig="isFilesTooBig"
-                @run="() => runEditorCode()"
+                :isGradable="isGradable"
+                :isPassed="isPassed"
+                @run="() => runMain()"
+                @grade="() => runGrader()"
                 @stop="() => stopRunning()"
                 @save="handleSave"
                 @share="() => $emit('share')"
@@ -49,7 +52,7 @@
                                 :gettext="gettext"
                                 :code="editorCode"
                                 :filename="`main.py`"
-                                @run="() => runEditorCode()"
+                                @run="() => runMain()"
                                 @save="handleSave"
                                 @change="handleEditorCodeChange"
                             ></editor>
@@ -62,7 +65,7 @@
                                 :gettext="gettext"
                                 :code="files[activeFileKey].body"
                                 :filename="activeFileKey"
-                                @run="() => runEditorCode()"
+                                @run="() => runMain()"
                                 @save="handleSave"
                                 @change="body => handleTextFileChange(activeFileKey, body)"
                             ></editor>
@@ -152,6 +155,7 @@ export default {
             isCodeSaved: true,
             isFilesSaved: true,
             isRunning: false,
+            isGrading: false,
             isScreen: false,
             isFileViewOpen: false,
             isFilesTooBig: false,
@@ -172,7 +176,16 @@ export default {
     },
     methods: {
         initRunner() {
-            const pushMessage = el => this.messages.push(el)
+            const pushStdOut = content => this.messages.push({
+                type: 'output',
+                outputType: this.isGrading ? 'grader' : 'stdout',
+                body: content,
+            })
+            const pushStdErr = content => this.messages.push({
+                type: 'output',
+                outputType: 'stderr',
+                body: content,
+            })
             const waitTextInput = () => this.inputMode = 'text'
             const waitRawInput = resolve => {
                 this.inputMode = 'raw'
@@ -220,11 +233,7 @@ export default {
                     // Augment drawable with data URL when drawing an image.
                     if (!isImageFilename(task.drawable.filename)) {
                         task.drawable.dataUrl = errorDataUrl
-                        pushMessage({
-                            type: 'output',
-                            outputType: 'stderr',
-                            body: `unable to load image file: ${task.drawable.filename}`,
-                        })
+                        pushStdErr(`unable to load image file: ${task.drawable.filename}`)
                     } else {
                         task.drawable.dataUrl = toDataUrl(task.drawable.filename, this.files[task.drawable.filename].body)
                     }
@@ -246,21 +255,13 @@ export default {
                 ],
                 stdout: {
                     write(content) {
-                        pushMessage({
-                            type: 'output',
-                            outputType: 'stdout',
-                            body: content,
-                        })
+                        pushStdOut(content)
                     },
                     flush() { },
                 },
                 stderr: {
                     write(content) {
-                        pushMessage({
-                            type: 'output',
-                            outputType: 'stderr',
-                            body: content,
-                        })
+                        pushStdErr(content)
                     },
                     flush() { },
                 },
@@ -382,8 +383,8 @@ export default {
         setViewMode(viewMode) {
             this.viewMode = viewMode
         },
-        async runEditorCode() {
-            if (this.editorCode.trim() === '') {
+        async runCode(code) {
+            if (code.trim() === '') {
                 return;
             }
             this.isScreen = false
@@ -391,15 +392,22 @@ export default {
             this.messages = []
             this.isRunning = true
 
+            const isCs1mediaUsed = hasCs1media(code) || hasCs1media(this.editorCode)
             const files = (
-                hasCs1media(this.editorCode) ? 
+                isCs1mediaUsed ? 
                 (await getFilesWithImageProps(this.files)) : 
                 this.files
             )
 
             const exit = await this.runner.runCodeWithFiles(
-                this.editorCode,
-                files,
+                code,
+                {
+                    ...files,
+                    'main.py': {
+                        type: 'text',
+                        body: this.editorCode,
+                    },
+                },
             )
             this.isRunning = false
             if (exit === 0) {
@@ -416,6 +424,20 @@ export default {
             if (!this.isFilesSaved) {
                 this.handleSave({ autosave: true })
             }
+        },
+        runMain() {
+            return this.runCode(this.editorCode)
+        },
+        async runGrader() {
+            if (!this.files.hasOwnProperty('.grader.py')) {
+                return
+            } else if (this.files['.grader.py'].type !== 'text') {
+                return
+            }
+            this.isGrading = true
+            const result = await this.runCode(this.files['.grader.py'].body)
+            this.isGrading = false
+            return result
         },
         stopRunning() {
             this.isRunnerReady = false
@@ -488,6 +510,12 @@ export default {
                 this.files.hasOwnProperty(this.activeFileKey) && 
                 this.files[this.activeFileKey].type === 'base64'
             )
+        },
+        isGradable() {
+            return this.files.hasOwnProperty('.grader.py')
+        },
+        isPassed() {
+            return this.files.hasOwnProperty('.passed.json')
         },
     },
 }
