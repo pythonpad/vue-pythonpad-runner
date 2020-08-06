@@ -191,6 +191,7 @@ export default {
             this.closeEditor()  
         },
         async handleDropFile(e) {
+            this.isFileDraggedOver = false
             const files = e.dataTransfer.files
             if (!files) {
                 return
