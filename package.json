@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/gulp dev",
-    "build": "./node_modules/.bin/gulp build"
+    "build": "sh ./buildlibs.sh && ./node_modules/.bin/gulp build"
   },
   "repository": "git@gitlab.com:intcoding/vue-pythonpad-runner.git",
   "author": "Jeongmin Byun <jmbyun91@gmail.com>",
