@@ -76,7 +76,7 @@ class Drawable(_EventTrigger):
         return self.depth
 
     def getReferencePoint(self):
-        return Point(self.refx, self.refy)
+        return Point(self.x + self.refx, self.y + self.refy)
 
     def getRefTransform(self):
         return Transform.translate(self.x + self.refx, self.y + self.refy)
