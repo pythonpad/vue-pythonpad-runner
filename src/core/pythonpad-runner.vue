@@ -150,6 +150,7 @@ export default {
         'locale',
         'brythonStaticUrl',
         'staticUrl',
+        'hangerUrl',
         'initSrc',
         'initFiles',
     ],
@@ -262,6 +263,7 @@ export default {
                 codeName: '__main__', 
                 codeCwd: '.',
                 staticUrl: this.brythonStaticUrl,
+                hangerUrl: this.hangerUrl || '/hanger',
                 files: {},
                 paths: [
                     `${this.staticUrl}/brythonlib`,

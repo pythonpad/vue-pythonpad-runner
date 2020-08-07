@@ -1538,9 +1538,9 @@ browserslist@^4.12.0, browserslist@^4.8.5:
     escalade "^3.0.1"
     node-releases "^1.1.58"
 
-"brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.22":
+"brython-runner@https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#v0.1.23":
   version "1.0.0"
-  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#51102112f57b94c977e31a36a2e6415bdb167df5"
+  resolved "https://gitlab+deploy-token-182221:efEy36vvsCVFQB1hUoCc@gitlab.com/intcoding/brython-runner.git#e4b30e357196317d72d4a4315691ca454c3ec07a"
   dependencies:
     raw-loader "^4.0.1"
     worker-loader "^3.0.0"
