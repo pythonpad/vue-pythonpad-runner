@@ -37,6 +37,7 @@
                                 :activeFileKey="activeFileKey"
                                 @active-file-key-change="fileKey => handleFileKeyChange(fileKey)"
                                 @create-file="handleCreateFile"
+                                @create-dir="handleCreateDir"
                                 @rename-file="handleRenameFile"
                                 @delete-file="handleDeleteFile"
                                 @add-file="handleAddFile"
@@ -370,6 +371,14 @@ export default {
         handleCreateFile(filename) {
             Vue.set(this.files, filename, {
                 type: 'text',
+                body: '',
+            })
+            this.isFilesSaved = false
+            this.$emit('edit-files', this.files)
+        },
+        handleCreateDir(filename) {
+            Vue.set(this.files, filename, {
+                type: 'dir',
                 body: '',
             })
             this.isFilesSaved = false
