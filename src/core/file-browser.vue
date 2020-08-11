@@ -333,9 +333,13 @@ export default {
                 reader.onload = () => resolve(reader.result)
                 reader.onerror = error => reject(error)
             })
+            
             this.isAddingFile = true
             for (const file of files) {
-                if (file.isDirectory || file.type === '') {
+                let textBody = null
+                try {
+                    textBody = await toText(file)
+                } catch (err) {
                     // Skip directory for now.
                     continue
                 }
@@ -357,7 +361,7 @@ export default {
                 let body = ''
                 try {
                     if (isText) {
-                        body = await toText(file)
+                        body = textBody
                     } else {
                         body = await toBase64(file)
                     }
