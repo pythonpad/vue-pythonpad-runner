@@ -349,9 +349,10 @@ export default {
         },
         isEditorTextValid() {
             const isDuplicate = Object.keys(this.files).includes(this.editorText) 
+            const isDuplicateDir = Object.keys(this.files).includes(this.editorText + '/') 
             const isRenamingInit = this.isRenamingFile && (this.renamingFileKey === this.editorText)
             const filenameValidator = /^[^<>:"/\|?*%]*$/
-            if (isDuplicate && !isRenamingInit) {
+            if ((isDuplicate || isDuplicateDir) && !isRenamingInit) {
                 return false
             } else if (['', '.', '..'].includes(this.editorText)) {
                 return false
