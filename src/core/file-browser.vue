@@ -56,6 +56,21 @@
                 </button>
             </div>
         </div>
+        <div v-if="deleteFileKeys !== null" class="confirm">
+            <i class="list-icon fa fa-exclamation-triangle"></i>
+            <div v-if="deleteFileKeys.length === 1" class="message">
+                {{ gettext('msg.deleteConfirm', { filename: getFilename(deleteFileKeys[0]) }) }}
+            </div>
+            <div v-else class="message">
+                {{ gettext('msg.deleteNumberConfirm', { count: deleteFileKeys.length }) }}
+            </div>
+            <button class="list-button" @click="handleEditorOk">
+                <i class="fa fa-check"></i>
+            </button>
+            <button class="list-button" @click="handleEditorCancel">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
         <file-browser-dir
             :gettext="gettext"
             :files="files"
@@ -68,7 +83,7 @@
             :createFileParentKey="createFileParentKey"
             :createDirParentKey="createDirParentKey"
             :renameFileKey="renameFileKey"
-            :deleteFileKey="deleteFileKey"
+            :deleteFileKeys="deleteFileKeys"
             @editor-ok="editorText => handleEditorOk(editorText)"
             @editor-cancel="() => handleEditorCancel()"
             @expand="fileKey => handleExpand(fileKey)"
@@ -168,7 +183,7 @@ export default {
             createFileParentKey: null,
             createDirParentKey: null,
             renameFileKey: null,
-            deleteFileKey: null,
+            deleteFileKeys: null,
             isCreatingFile: false,
             isRenamingFile: false,
             isDeletingFile: false,
@@ -181,8 +196,11 @@ export default {
     },
     methods: {
         isHiddenFile(fileKey) {
+            return this.getFilename(fileKey).startsWith('.')
+        },
+        getFilename(fileKey) {
             const tokens = fileKey.split('/')
-            return tokens[tokens.length - 1].startsWith('.')
+            return (tokens[tokens.length - 1] || tokens[tokens.length - 2])
         },
         handleExpand(fileKey) {
             if (!this.expandedFileKeys.includes(fileKey)) {
@@ -193,6 +211,9 @@ export default {
             this.expandedFileKeys = this.expandedFileKeys.filter(key => key !== fileKey)
         },
         handleSelect(fileKey) {
+            if (this.isEditing) {
+                this.handleEditorCancel()
+            }
             this.selectedFileKeys = [fileKey]
             if (fileKey === 'main.py' || this.files[fileKey].type !== 'dir') {
                 this.$emit('active-file-key-change', fileKey)
@@ -216,7 +237,7 @@ export default {
                 }
                 this.createFileParentKey = null
             } else if (this.createDirParentKey !== null) {
-                if (this.createDirParentKey) {
+                if (this.createDirParentKey !== null) {
                     fileKey = this.createDirParentKey + fileKey + '/'
                 }
                 this.$emit('create-dir', fileKey)
@@ -236,17 +257,28 @@ export default {
                     const childKeys = Object.keys(this.files)
                         .filter(key => key.startsWith(this.renameFileKey))
                     childKeys.sort((a, b) => (a < b ? 1 : (a > b ? -1 : 0))) // Sort in descending order.
+                    this.selectedFileKeys = ['main.py']
                     for (const key of childKeys) {
                         this.$emit('rename-file', key, key.replace(this.renameFileKey, fileKey))
                     }
+                    this.selectedFileKeys = [fileKey]
                 } else {
+                    this.selectedFileKeys = ['main.py']
                     this.$emit('rename-file', this.renameFileKey, fileKey)
+                    this.selectedFileKeys = [fileKey]
                 }
                 if (this.isHiddenFile(editorText)) {
                     this.showHiddenFile = true
                 }
                 this.renameFileKey = null
-            }   
+            } else if (this.deleteFileKeys !== null) {
+                this.selectedFileKeys = ['main.py']
+                this.deleteFileKeys.sort((a, b) => (a < b ? 1 : (a > b ? -1 : 0)))
+                for (const key of this.deleteFileKeys) {
+                    this.$emit('delete-file', key)
+                }
+                this.deleteFileKeys = null
+            }
             this.isEditing = false
         },
         handleEditorCancel() {
@@ -254,6 +286,7 @@ export default {
             this.createFileParentKey = null
             this.createDirParentKey = null
             this.renameFileKey = null
+            this.deleteFileKeys = null
         },
         handleCreateFile() {
             if (this.isEditing || this.selectedFileKeys.length > 1) {
@@ -291,7 +324,11 @@ export default {
             this.renameFileKey = this.selectedFileKeys[0]
         },
         handleDeleteFile() {
-            
+            if (this.isEditing || this.selectedFileKeys.includes('main.py')) {
+                return
+            }
+            this.isEditing = true
+            this.deleteFileKeys = this.selectedFileKeys.slice(0)
         },
         // handleEditorOk() {
         //     if (!this.isDeletingFile && !this.isEditorTextValid) {
@@ -476,7 +513,27 @@ export default {
         color: #666;
         cursor: not-allowed;
     }
-    .files {
+    .confirm {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        width: 100%;
+        display: flex;
+        background-color: #444444;
+        flex-flow: row nowrap;
+        align-items: center;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+        color: #ffffff;
+    }
+    .message {
+        flex: 1 1 auto;
+        padding: 0 0.2rem;
+        margin-right: 0.3rem;
+        color: #ffffff;
+        font-size: 0.8rem;
+    }
+    /* .files {
         border: 2px solid transparent;
         padding: 0.2rem 0;
         width: 100%;
@@ -555,23 +612,7 @@ export default {
     .list-button.is-disabled {
         color: #666666;
         cursor: not-allowed;
-    }
-    .confirm {
-        display: flex;
-        background-color: #444444;
-        flex-flow: row nowrap;
-        align-items: center;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.8rem;
-        color: #ffffff;
-    }
-    .message {
-        flex: 1 1 auto;
-        padding: 0 0.2rem;
-        margin-right: 0.3rem;
-        color: #ffffff;
-        font-size: 0.8rem;
-    }
+    } */
     @media (max-width: 800px) {
         .editor input {
             flex: 0 0 auto;

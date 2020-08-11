@@ -120,7 +120,7 @@
                 :createFileParentKey="createFileParentKey"
                 :createDirParentKey="createDirParentKey"
                 :renameFileKey="renameFileKey"
-                :deleteFileKey="deleteFileKey"
+                :deleteFileKeys="deleteFileKeys"
                 @expand="fileKey => $emit('expand', fileKey)"
                 @collapse="fileKey => $emit('collapse', fileKey)"
                 @editor-ok="editorText => $emit('editor-ok', editorText)"
@@ -145,7 +145,7 @@ export default {
         'createFileParentKey',
         'createDirParentKey',
         'renameFileKey',
-        'deleteFileKey',
+        'deleteFileKeys',
     ],
     data() {
         return {

@@ -24,5 +24,6 @@ export default {
         outputCountLimited: '동시에 최대 %{smart_count}개의 출력물만 표시됩니다.',
         noPreview: '프리뷰가 지원되지 않는 파일입니다.',
         deleteConfirm: '%{filename}을(를) 삭제하시겠습니까?',
+        deleteNumberConfirm: '선택된 파일 %{count}개를 삭제하시겠습니까?',
     },
 }   
