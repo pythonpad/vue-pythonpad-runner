@@ -71,93 +71,39 @@
                 <i class="fa fa-times"></i>
             </button>
         </div>
-        <file-browser-dir
-            :gettext="gettext"
-            :files="files"
-            :fileKey="''"
-            :depth="0"
-            :activeFileKey="activeFileKey"
-            :expandedFileKeys="expandedFileKeys"
-            :selectedFileKeys="selectedFileKeys"
-            :showHiddenFile="showHiddenFile"
-            :createFileParentKey="createFileParentKey"
-            :createDirParentKey="createDirParentKey"
-            :renameFileKey="renameFileKey"
-            :deleteFileKeys="deleteFileKeys"
-            @editor-ok="editorText => handleEditorOk(editorText)"
-            @editor-cancel="() => handleEditorCancel()"
-            @expand="fileKey => handleExpand(fileKey)"
-            @collapse="fileKey => handleCollapse(fileKey)"
-            @select="fileKeys => handleSelect(fileKeys)"
-        ></file-browser-dir>
-        <!-- <div 
-            class="files" 
+        <div 
+            class="files"
             :class="{
-                'is-dragged-over': isFileDraggedOver,
+                'dragtarget': dragTargetFileKey === '',
             }"
-            ref="files" 
-            @drop.prevent="handleDropFile" 
-            @dragover.prevent="handleDragoverFile"
-            @dragleave.prevent="handleDragleaveFile"
+            @drop.prevent="e => handleDrop(e, '')" 
+            @dragover.prevent="e => handleDragover(e, '')"
+            @dragleave.prevent="e => handleDragleave(e, '')"
         >
-            <div v-if="isEditing && !isDeletingFile" class="editor">
-                <i class="list-icon fa fa-file-o"></i>
-                <input 
-                    type="text" 
-                    ref="editorInput"
-                    v-model="editorText" 
-                    @keyup.13="handleEditorOk"
-                    @keyup.27="handleEditorCancel"
-                />
-                <button 
-                    class="list-button" 
-                    :class="{'is-disabled': !isEditorTextValid}"
-                    @click="handleEditorOk"
-                >
-                    <i class="fa fa-check"></i>
-                </button>
-                <button class="list-button" @click="handleEditorCancel">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div v-if="isDeletingFile" class="confirm">
-                <i class="list-icon fa fa-exclamation-triangle"></i>
-                <div class="message">
-                    {{ gettext('msg.deleteConfirm', { filename: deletingFileKey }) }}
-                </div>
-                <button class="list-button" @click="handleEditorOk">
-                    <i class="fa fa-check"></i>
-                </button>
-                <button class="list-button" @click="handleEditorCancel">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <a
-                v-for="fileKey in fileKeys"
-                class="file"
-                :class="{
-                    'main': fileKey === 'main.py',
-                    'active': fileKey === activeFileKey,
-                    'is-hidden': fileKey === renamingFileKey || (!showHiddenFile && isHiddenFile(fileKey)),
-                }"
-                :key="fileKey"
-                @click="() => $emit('active-file-key-change', fileKey)"
-            >
-                <i
-                    v-if="fileKey === 'main.py'"
-                    class="fa fa-file-code-o"
-                ></i>
-                <i
-                    v-else-if="files[fileKey].type === 'text'"
-                    class="fa fa-file-text-o"
-                ></i>
-                <i
-                    v-else
-                    class="fa fa-file-o"
-                ></i>
-                <span>{{ fileKey }}</span>
-            </a>
-        </div> -->
+            <file-browser-dir
+                :gettext="gettext"
+                :files="files"
+                :fileKey="''"
+                :depth="0"
+                :activeFileKey="activeFileKey"
+                :expandedFileKeys="expandedFileKeys"
+                :selectedFileKeys="selectedFileKeys"
+                :dragTargetFileKey="dragTargetFileKey"
+                :showHiddenFile="showHiddenFile"
+                :createFileParentKey="createFileParentKey"
+                :createDirParentKey="createDirParentKey"
+                :renameFileKey="renameFileKey"
+                :deleteFileKeys="deleteFileKeys"
+                @editor-ok="editorText => handleEditorOk(editorText)"
+                @editor-cancel="() => handleEditorCancel()"
+                @expand="fileKey => handleExpand(fileKey)"
+                @collapse="fileKey => handleCollapse(fileKey)"
+                @select="fileKeys => handleSelect(fileKeys)"
+                @drop="(e, fileKey) => handleDrop(e, fileKey)"
+                @dragover="(e, fileKey) => handleDragover(e, fileKey)"
+                @dragleave="(e, fileKey) => handleDragleave(e, fileKey)"
+            ></file-browser-dir>
+        </div>
     </div>
 </template>
 <script>
@@ -178,6 +124,7 @@ export default {
         return {
             expandedFileKeys: [],
             selectedFileKeys: ['main.py'],
+            dragTargetFileKey: null,
             showHiddenFile: false,
             isEditing: false,
             createFileParentKey: null,
@@ -214,7 +161,7 @@ export default {
             if (this.isEditing) {
                 this.handleEditorCancel()
             }
-            // Handle the case where fileKeys is a single string value for compatibility.
+            // Handle the case where fileKeys is a single string value -- for compatibility.
             if (Array.isArray(fileKeys) && fileKeys.length > 1) {
                 if (fileKeys.includes(this.selectedFileKeys[0])) {
                     this.selectedFileKeys = [
@@ -343,110 +290,77 @@ export default {
             this.isEditing = true
             this.deleteFileKeys = this.selectedFileKeys.slice(0)
         },
-        // handleEditorOk() {
-        //     if (!this.isDeletingFile && !this.isEditorTextValid) {
-        //         return
-        //     }
-        //     if (this.isCreatingFile) {
-        //         this.$emit('create-file', this.editorText)
-        //         if (this.isHiddenFile(this.editorText)) {
-        //             this.showHiddenFile = true
-        //         }
-        //     } else if (this.isRenamingFile) {
-        //         this.$emit('rename-file', this.renamingFileKey, this.editorText)
-        //         if (this.isHiddenFile(this.editorText)) {
-        //             this.showHiddenFile = true
-        //         }
-        //     } else if (this.isDeletingFile) {
-        //         this.$emit('delete-file', this.deletingFileKey)
-        //     }
-        //     this.closeEditor()
-        // },
-        // handleEditorCancel() {
-        //     this.closeEditor()  
-        // },
-        // async handleDropFile(e) {
-        //     this.isFileDraggedOver = false
-        //     const files = e.dataTransfer.files
-        //     if (!files) {
-        //         return
-        //     }
-
-        //     const toBase64 = file => new Promise((resolve, reject) => {
-        //         const reader = new FileReader()
-        //         reader.readAsDataURL(file)
-        //         reader.onload = () => {
-        //             let encoded = reader.result.toString().replace(/^data:(.*,)?/, '')
-        //             if ((encoded.length % 4) > 0) {
-        //                 encoded += '='.repeat(4 - (encoded.length % 4))
-        //             }
-        //             resolve(encoded);
-        //         };
-        //         reader.onerror = error => reject(error)
-        //     })
-        //     const toText = file => new Promise((resolve, reject) => {
-        //         const reader = new FileReader()
-        //         reader.readAsText(file)
-        //         reader.onload = () => resolve(reader.result)
-        //         reader.onerror = error => reject(error)
-        //     })
-        //     this.isAddingFile = true
-        //     for (const file of [...files]) {
-        //         const isText = file.type.includes('text/') || isTextFilename(file.name)
-        //         const filenames = Object.keys(this.files)
-        //         let filename = file.name
-        //         let count = 2
-        //         while (filenames.includes(filename)) {
-        //             filename = `(${count})${file.name}`
-        //             count += 1
-        //         }
-        //         const type = isText ? 'text' : 'base64'
-        //         let body = ''
-        //         try {
-        //             if (isText) {
-        //                 body = await toText(file)
-        //             } else {
-        //                 body = await toBase64(file)
-        //             }
-        //         } catch (err) {}
-        //         this.$emit('add-file', filename, { type, body })
-        //         if (this.isHiddenFile(filename)) {
-        //             this.showHiddenFile = true
-        //         }
-        //     }
-        //     this.isAddingFile = false
-        // },
-        // handleDragoverFile() {
-        //     this.isFileDraggedOver = true
-        // },
-        // handleDragleaveFile() {
-        //     this.isFileDraggedOver = false
-        // },
-        // closeEditor() {
-        //     this.isCreatingFile = false
-        //     this.isRenamingFile = false
-        //     this.isDeletingFile = false
-        //     this.editorText = ''
-        //     this.renamingFileKey = ''
-        //     this.deletingFileKey = ''
-        // },
+        handleDrop(e, fileKey) {
+            this.dragTargetFileKey = null
+            if (e.dataTransfer.files) {
+                this.handleDropFile(e.dataTransfer.files, fileKey)
+            }
+        },
+        handleDragover(e, fileKey) {
+            this.dragTargetFileKey = fileKey
+        },
+        handleDragleave(e, fileKey) {
+            this.dragTargetFileKey = null
+        },
+        async handleDropFile(files, targetFileKey) {
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload = () => {
+                    let encoded = reader.result.toString().replace(/^data:(.*,)?/, '')
+                    if ((encoded.length % 4) > 0) {
+                        encoded += '='.repeat(4 - (encoded.length % 4))
+                    }
+                    resolve(encoded);
+                };
+                reader.onerror = error => reject(error)
+            })
+            const toText = file => new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.readAsText(file)
+                reader.onload = () => resolve(reader.result)
+                reader.onerror = error => reject(error)
+            })
+            this.isAddingFile = true
+            for (const file of [...files]) {
+                if (file.isDirectory || file.type === '') {
+                    // Skip directory for now.
+                    continue
+                }
+                const isText = file.type.includes('text/') || isTextFilename(file.name)
+                const fileKeys = Object.keys(this.files)
+                let fileKey = `${targetFileKey}${file.name}`
+                let count = 2
+                while (fileKeys.includes(fileKey)) {
+                    let filename = `${file.name}(${count})`
+                    if (file.name.includes('.')) {
+                        const tokens = file.name.split('.')
+                        const ext = tokens.pop()
+                        filename = `${tokens.join('.')}(${count}).${ext}`
+                    }
+                    fileKey = `${targetFileKey}${filename}`
+                    count += 1
+                }
+                const type = isText ? 'text' : 'base64'
+                let body = ''
+                try {
+                    if (isText) {
+                        body = await toText(file)
+                    } else {
+                        body = await toBase64(file)
+                    }
+                } catch (err) {}
+                this.$emit('add-file', fileKey, { type, body })
+                if (this.isHiddenFile(file.name)) {
+                    this.showHiddenFile = true
+                }
+            }
+            this.isAddingFile = false
+        },
     },
     watch: {
-        // isEditing(value, oldValue) {
-        //     if (value && !oldValue) {
-        //         this.$nextTick(() => {
-        //             this.$refs.files.scrollTop = 0
-        //             if (this.$refs.editorInput) {
-        //                 this.$refs.editorInput.focus()
-        //             }
-        //         })
-        //     }
-        // },
         activeFileKey() {
             this.handleEditorCancel()
-        },
-        files() {
-            console.log(this.files)
         },
     },
     computed: {
@@ -456,9 +370,6 @@ export default {
             keys.sort()
             return keys
         },
-        // isEditing() {
-        //     return this.isCreatingFile || this.isRenamingFile || this.isDeletingFile
-        // },
         isEditorTextValid() {
             const isDuplicate = Object.keys(this.files).includes(this.editorText) 
             const isRenamingInit = this.isRenamingFile && (this.renamingFileKey === this.editorText)
@@ -545,6 +456,15 @@ export default {
         margin-right: 0.3rem;
         color: #ffffff;
         font-size: 0.8rem;
+    }
+    .files {
+        padding: 0.2rem 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+    .files.dragtarget {
+        background-color: #555555;
     }
     /* .files {
         border: 2px solid transparent;

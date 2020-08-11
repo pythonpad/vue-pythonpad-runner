@@ -5,9 +5,6 @@
             'is-dragged-over': isFileDraggedOver,
         }"
         ref="dir" 
-        @drop.prevent="handleDropFile" 
-        @dragover.prevent="handleDragoverFile"
-        @dragleave.prevent="handleDragleaveFile"
     >
         <div v-if="isCreatingFile || isCreatingDir" class="editor">
             <i v-if="isCreatingFile" class="list-icon fa fa-file-o"></i>
@@ -36,7 +33,7 @@
             <div 
                 v-if="fileItem.key === renameFileKey" 
                 class="editor"
-                :key="fileItem.Key"
+                :key="`${fileItem.key}-editor`"
             >
                 <i
                     v-if="fileItem.key === 'main.py'"
@@ -78,11 +75,15 @@
                 :class="{
                     'selected': selectedFileKeys.includes(fileItem.key),
                     'active': fileItem.key === activeFileKey,
+                    'dragtarget': fileItem.key === dragTargetFileKey,
                     'is-hidden': (!showHiddenFile && fileItem.name.startsWith('.')),
                 }"
-                :key="fileItem.Key"
+                :key="`${fileItem.key}-file`"
                 :style="{ paddingLeft: `${0.2 + 0.5 * depth}rem`}"
                 @click="e => handleClick(e, fileItem)"
+                @drop.prevent="e => handleDrop(e, fileItem)" 
+                @dragover.prevent="e => handleDragover(e, fileItem)"
+                @dragleave.prevent="e => handleDragleave(e, fileItem)"
             >
                 <i
                     v-if="fileItem.key === 'main.py'"
@@ -108,7 +109,7 @@
             </a>
             <file-browser-dir
                 v-if="fileItem.type === 'dir' && isExpanded(fileItem.key)"
-                :key="fileItem.key"
+                :key="`${fileItem.key}-dir`"
                 :gettext="gettext"
                 :files="files"
                 :fileKey="fileItem.key"
@@ -116,6 +117,7 @@
                 :activeFileKey="activeFileKey"
                 :expandedFileKeys="expandedFileKeys"
                 :selectedFileKeys="selectedFileKeys"
+                :dragTargetFileKey="dragTargetFileKey"
                 :showHiddenFile="showHiddenFile"
                 :createFileParentKey="createFileParentKey"
                 :createDirParentKey="createDirParentKey"
@@ -126,6 +128,9 @@
                 @editor-ok="editorText => $emit('editor-ok', editorText)"
                 @editor-cancel="() => $emit('editor-cancel')"
                 @select="fileKey => $emit('select', fileKey)"
+                @drop="(e, fileKey) => $emit('drop', e, fileKey)"
+                @dragover="(e, fileKey) => $emit('dragover', e, fileKey)"
+                @dragleave="(e, fileKey) => $emit('dragleave', e, fileKey)"
             ></file-browser-dir>
         </template>
     </div>
@@ -141,6 +146,7 @@ export default {
         'activeFileKey',
         'expandedFileKeys',
         'selectedFileKeys',
+        'dragTargetFileKey',
         'showHiddenFile',
         'createFileParentKey',
         'createDirParentKey',
@@ -154,6 +160,17 @@ export default {
         }
     },
     methods: {
+        getDragTarget(fileItem) {
+            if (fileItem.type !== 'dir') {
+                if (this.fileKey) {
+                    return fileKey 
+                } else {
+                    return ''
+                }
+            } else {
+                return fileItem.key
+            }
+        },
         isExpanded(fileKey) {
             return this.expandedFileKeys.includes(fileKey)
         },
@@ -201,19 +218,17 @@ export default {
             this.$emit('editor-cancel')
             this.editorText = ''
         },
-        async handleDropFile(e) {
-            this.isFileDraggedOver = false
-            const files = e.dataTransfer.files
-            if (!files) {
-                return
-            }
-            this.$emit('drop-file', this.fileKey, files)
+        handleDrop(e, fileItem) {
+            e.stopPropagation()
+            this.$emit('drop', e, this.getDragTarget(fileItem))
         },
-        handleDragoverFile() {
-            this.isFileDraggedOver = true
+        handleDragover(e, fileItem) {
+            e.stopPropagation()
+            this.$emit('dragover', e, this.getDragTarget(fileItem))
         },
-        handleDragleaveFile() {
-            this.isFileDraggedOver = false
+        handleDragleave(e, fileItem) {
+            e.stopPropagation()
+            this.$emit('dragleave', e, this.getDragTarget(fileItem))
         },
     },
     watch: {
@@ -334,6 +349,10 @@ export default {
     }
     .file.selected {
         background-color: #555555;
+    }
+    .file.dragtarget {
+        background-color: #555555;
+        color: #b88b03;
     }
     .is-hidden {
         display: none;
