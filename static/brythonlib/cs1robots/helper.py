@@ -5,7 +5,7 @@ from .robot.position import Position
 from .robot.robot import Robot as GeneralRobot
 from .robot.wall import Wall
 from .robot.world import World, load_world_from_save
-from .worlds_data import get_world_dict
+from .worlds_data import conv_world, get_world_dict
 import json
 
 def is_world():
@@ -24,12 +24,26 @@ def create_world(streets=None, avenues=None):
     __robot__ = {}
     __robot__['world'] = World(width=width, height=height)
 
-def load_world(world_name):
-    if '/' in world_name:
-        world_name = world_name.split('/')[-1]
-    if world_name.endswith('.wld'):
-        world_name = world_name[:-4]
+def load_world_by_path(file_path):
+    world_file = open(file_path, 'r')
+    world_data_source = world_file.read()
+    world_file.close()
+    global_dict = {}
+    exec(world_data_source, global_dict)
+    world_dict = conv_world(global_dict)
+    load_world_from_dict(world_dict)
+
+def load_world_by_name(world_name):
     load_world_from_dict(get_world_dict(world_name))
+
+def load_world(arg):
+    try:
+        load_world_by_path(arg)
+    except FileNotFoundError as e:
+        try:
+            load_world_by_name(arg)
+        except:
+            raise e
 
 def save_world_to_dict():
     return __robot__['world'].to_save()
