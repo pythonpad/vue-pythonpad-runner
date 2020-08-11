@@ -4,7 +4,6 @@ export default {
     edited: 'Edited',
     passed: 'Passed',
     save: 'Save',
-    share: 'Share',
     reset: 'Reset',
     preparing: 'Loading',
     run: 'Run',

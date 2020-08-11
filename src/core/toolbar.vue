@@ -44,14 +44,17 @@
                     <i class="fa fa-exclamation-triangle"></i>
                     <span>{{ gettext('tooBig') }}</span>
                 </button>
-                <button class="tool-button" @click="() => $emit('share')">
-                    <i class="fa fa-share"></i>
-                    <span>{{ gettext('share') }}</span>
+                <button 
+                    v-for="button in buttons"
+                    class="tool-button"
+                    :class="button.class"
+                    :key="button.label"
+                    @click="() => handleButtonClick(button)"
+                >   
+                    <i v-if="busyButtonLabels.includes(button.label)" class="fa fa-spinner fa-spin"></i>
+                    <i v-else class="fa" :class="`fa-${button.fa}`"></i>
+                    <span>{{ button.label }}</span>
                 </button>
-                <!-- <button class="tool-button is-danger" @click="() => $emit('reset')">
-                    <i class="fa fa-history"></i>
-                    <span>{{ gettext('reset') }}</span>
-                </button> -->
             </div>
             <div v-if="!isSaved || isPassed" class="toolbar-group">
                 <div v-if="!isSaved" class="tool-label is-warning">
@@ -133,7 +136,21 @@ export default {
         'isGradable',
         'isPassed',
         'viewMode',
+        'buttons',
     ],
+    data() {
+        return {
+            busyButtonLabels: [],
+        }
+    },
+    methods: {
+        async handleButtonClick(button) {
+            this.busyButtonLabels.push(button.label)
+            await button.callback()
+            this.busyButtonLabels = this.busyButtonLabels
+                .filter(label => label !== button.label)
+        }
+    },
 }
 </script>
 <style scoped>

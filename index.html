@@ -19,6 +19,7 @@
             :static-url="staticUrl"
             :init-src="code"
             :init-files="files"
+            :buttons="buttons"
             @save="handleSave"
         ></pythonpad-runner>
     </div>
@@ -39,7 +40,24 @@
                         type: 'text',
                         body: 'how do you do?',
                     }
-                }
+                },
+                buttons: [
+                    {
+                        label: '공유',
+                        fa: 'share',
+                        callback: () => {
+                            alert('Share!')
+                        },
+                    },
+                    {
+                        label: '리셋',
+                        fa: 'undo',
+                        class: 'is-danger',
+                        callback: () => {
+                            alert('Reset!')
+                        },
+                    },
+                ],
             },
             mounted() {
 

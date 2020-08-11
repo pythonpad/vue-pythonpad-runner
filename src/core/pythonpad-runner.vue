@@ -12,11 +12,11 @@
                 :isFilesTooBig="isFilesTooBig"
                 :isGradable="isGradable"
                 :isPassed="isPassed"
+                :buttons="buttons || []"
                 @run="() => runMain()"
                 @grade="() => runGrader()"
                 @stop="() => stopRunning()"
                 @save="handleSave"
-                @share="() => $emit('share')"
                 @reset="() => $emit('reset')"
                 @open-file-view="() => (isFileViewOpen = true)"
                 @close-file-view="() => (isFileViewOpen = false)"
@@ -155,6 +155,7 @@ export default {
         'hangerUrl',
         'initSrc',
         'initFiles',
+        'buttons',
     ],
     components: {
         Console,
