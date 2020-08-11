@@ -88,7 +88,7 @@
             @editor-cancel="() => handleEditorCancel()"
             @expand="fileKey => handleExpand(fileKey)"
             @collapse="fileKey => handleCollapse(fileKey)"
-            @select="fileKey => handleSelect(fileKey)"
+            @select="fileKeys => handleSelect(fileKeys)"
         ></file-browser-dir>
         <!-- <div 
             class="files" 
@@ -210,18 +210,31 @@ export default {
         handleCollapse(fileKey) {
             this.expandedFileKeys = this.expandedFileKeys.filter(key => key !== fileKey)
         },
-        handleSelect(fileKey) {
+        handleSelect(fileKeys) {
             if (this.isEditing) {
                 this.handleEditorCancel()
             }
-            this.selectedFileKeys = [fileKey]
-            if (fileKey === 'main.py' || this.files[fileKey].type !== 'dir') {
-                this.$emit('active-file-key-change', fileKey)
-            } else {
-                if (this.expandedFileKeys.includes(fileKey)) {
-                    this.handleCollapse(fileKey)
+            // Handle the case where fileKeys is a single string value for compatibility.
+            if (Array.isArray(fileKeys) && fileKeys.length > 1) {
+                if (fileKeys.includes(this.selectedFileKeys[0])) {
+                    this.selectedFileKeys = [
+                        this.selectedFileKeys[0],
+                        ...fileKeys.filter(key => key !== this.selectedFileKeys[0])
+                    ]
                 } else {
-                    this.handleExpand(fileKey)
+                    this.selectedFileKeys = fileKeys
+                }
+            } else {
+                const fileKey = Array.isArray(fileKeys) ? fileKeys[0] : fileKeys
+                this.selectedFileKeys = [fileKey]
+                if (fileKey === 'main.py' || this.files[fileKey].type !== 'dir') {
+                    this.$emit('active-file-key-change', fileKey)
+                } else {
+                    if (this.expandedFileKeys.includes(fileKey)) {
+                        this.handleCollapse(fileKey)
+                    } else {
+                        this.handleExpand(fileKey)
+                    }
                 }
             }
         },

@@ -82,7 +82,7 @@
                 }"
                 :key="fileItem.Key"
                 :style="{ paddingLeft: `${0.2 + 0.5 * depth}rem`}"
-                @click="() => handleClick(fileItem)"
+                @click="e => handleClick(e, fileItem)"
             >
                 <i
                     v-if="fileItem.key === 'main.py'"
@@ -157,8 +157,38 @@ export default {
         isExpanded(fileKey) {
             return this.expandedFileKeys.includes(fileKey)
         },
-        handleClick(fileItem) {
-            this.$emit('select', fileItem.key)
+        handleClick(e, fileItem) {
+            e.preventDefault()
+            if (e.shiftKey && (this.selectedFileKeys[0] !== fileItem.key)) {
+                if (fileItem.key === 'main.py') {
+                    // Ignore.
+                } else if (this.fileKeys.includes(this.selectedFileKeys[0])) {
+                    const keys = this.sortedFileKeys
+                    const x = keys.indexOf(this.selectedFileKeys[0])
+                    const y = keys.indexOf(fileItem.key)
+                    const newSelectedKeys = keys.slice(Math.min(x, y), Math.max(x, y) + 1)
+                    this.$emit('select', newSelectedKeys)
+                } else {
+                    this.$emit('select', fileItem.key)
+                }
+            } else if (e.ctrlKey || e.metaKey) {
+                if (this.selectedFileKeys.includes(fileItem.key)) {
+                    // Deselecting the file.
+                    const newSelectedKeys = this.selectedFileKeys.filter(key => key !== fileItem.key)
+                    this.$emit('select', newSelectedKeys)
+                } else if (this.fileKeys.includes(this.selectedFileKeys[0])) {
+                    // Adding the file to the selection.
+                    const newSelectedKeys = [
+                        ...this.selectedFileKeys,
+                        fileItem.key,
+                    ]
+                    this.$emit('select', newSelectedKeys)
+                } else {
+                    // Ignore.
+                }
+            } else {
+                this.$emit('select', fileItem.key)
+            }
         },
         handleEditorOk() {
             if (!this.isEditorTextValid) {
@@ -226,8 +256,8 @@ export default {
         isCreatingDir() {
             return this.createDirParentKey === this.fileKey
         },
-        fileItems() {
-            const items = Object.keys(this.files)
+        fileKeys() {
+            return Object.keys(this.files)
                 .filter(key => {
                     if (this.fileKey) {
                         // Either a file or a directory in this fileKey. 
@@ -241,6 +271,14 @@ export default {
                         return [-1, key.length - 1].includes(key.indexOf('/'))
                     }
                 })
+        },
+        sortedFileKeys() {
+            const keys = this.fileKeys 
+            keys.sort((a, b) => (a < b ? -1 : (a > b ? 1 : 0)))
+            return keys
+        },
+        fileItems() {
+            const items = this.fileKeys
                 .map(key => {
                     const tokens = key.split('/')
                     const name = tokens[tokens.length - 1] || tokens[tokens.length - 2]
@@ -282,6 +320,7 @@ export default {
         font-size: 0.8rem;
         color: #ffffff;
         cursor: pointer;
+        user-select: none;
     }
     .file.active {
         font-weight: bold;
