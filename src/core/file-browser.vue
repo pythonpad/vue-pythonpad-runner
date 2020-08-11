@@ -290,10 +290,22 @@ export default {
             this.isEditing = true
             this.deleteFileKeys = this.selectedFileKeys.slice(0)
         },
+        handleMoveFile(sourceFileKeys, targetFileKey) {
+            for (const sourceFileKey of sourceFileKeys) {
+                const tokens = sourceFileKey.split('/')
+                const filename = tokens[tokens.length - 1] || (tokens[tokens.length - 2] + '/')
+                this.$emit('move-file', sourceFileKey, targetFileKey + filename)
+            }
+        },
         handleDrop(e, fileKey) {
             this.dragTargetFileKey = null
-            if (e.dataTransfer.files) {
-                this.handleDropFile(e.dataTransfer.files, fileKey)
+            const raw = e.dataTransfer.getData('text')
+            const filesArray = [...e.dataTransfer.files]
+            if (filesArray.length > 0) {
+                this.handleDropFile(filesArray, fileKey)
+            } else if (raw) {
+                const fileKeys = JSON.parse(raw)
+                this.handleMoveFile(fileKeys, fileKey)
             }
         },
         handleDragover(e, fileKey) {
@@ -322,7 +334,7 @@ export default {
                 reader.onerror = error => reject(error)
             })
             this.isAddingFile = true
-            for (const file of [...files]) {
+            for (const file of files) {
                 if (file.isDirectory || file.type === '') {
                     // Skip directory for now.
                     continue
@@ -456,6 +468,9 @@ export default {
         margin-right: 0.3rem;
         color: #ffffff;
         font-size: 0.8rem;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-all;
     }
     .files {
         padding: 0.2rem 0;
@@ -466,86 +481,6 @@ export default {
     .files.dragtarget {
         background-color: #555555;
     }
-    /* .files {
-        border: 2px solid transparent;
-        padding: 0.2rem 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-    }
-    .files.is-dragged-over {
-        border: 2px dashed #ffffff;
-    }
-    .file {
-        display: block;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.8rem;
-        color: #ffffff;
-        cursor: pointer;
-    }
-    .file.main {
-        font-weight: bold;
-    }
-    .file .fa {
-        padding-right: 0.3rem;
-    }
-    .file:hover {
-        background-color: #383838;
-    }
-    .file.active {
-        background-color: #444444;
-    }
-    .is-hidden {
-        display: none;
-    }
-    .editor {
-        display: flex;
-        background-color: #444444;
-        flex-flow: row nowrap;
-        align-items: center;
-        padding: 0.2rem 0.5rem;
-        font-size: 0.8rem;
-        color: #ffffff;
-    }
-    .list-icon {
-        flex: 0 0 auto;
-        padding-right: 0.3rem;
-    }
-    .editor input {
-        flex: 1 1 auto;
-        padding: 0 0.2rem;
-        margin-right: 0.3rem;
-        border: 0;
-        outline: none;
-        background-color: #222222;
-        color: #ffffff;
-        font-size: 0.8rem;
-        line-height: 1.2rem;
-        height: 1.2rem;
-        min-width: none;
-    }
-    .list-button {
-        flex: 0 0 auto;
-        margin-left: 0.1rem;
-        border: 0;
-        border-radius: 3px;
-        text-align: center;
-        background-color: inherit; 
-        font-size: 0.8rem;
-        color: #ffffff;
-        cursor: pointer;
-        outline: none;
-        width: 1.5rem;
-        height: 1.2rem;
-        line-height: 1.2rem;
-    }
-    .list-button:not(.is-disabled):hover {
-        background-color: #666666;
-    }
-    .list-button.is-disabled {
-        color: #666666;
-        cursor: not-allowed;
-    } */
     @media (max-width: 800px) {
         .editor input {
             flex: 0 0 auto;
