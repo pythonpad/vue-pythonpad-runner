@@ -21,6 +21,7 @@
                             :class="{
                                 'error': message.outputType == 'stderr',
                                 'grader': message.outputType == 'grader',
+                                'postrun': message.outputType == 'postrun',
                             }"
                             :key="i"
                         >{{message.body}}</span>
@@ -136,6 +137,9 @@ export default {
         color: #ff4444;
     }
     .grader {
+        color: #1db954;
+    }
+    .postrun {
         color: #1db954;
     }
     .system {

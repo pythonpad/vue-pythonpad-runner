@@ -166,6 +166,8 @@ export default {
     data() {
         return {
             messages: [],
+            stdoutLog: [],
+            stderrLog: [],
             editorCode: this.initSrc,
             files: this.initFiles,
             inputMode: null,
@@ -175,8 +177,10 @@ export default {
             isSaving: false,
             isCodeSaved: true,
             isFilesSaved: true,
+            isLogging: false,
             isRunning: false,
             isGrading: false,
+            isPostrun: false,
             isScreen: false,
             isFileViewOpen: loadFromStorage('isFileViewOpen', false),
             isFilesTooBig: false,
@@ -197,16 +201,35 @@ export default {
     },
     methods: {
         initRunner() {
-            const pushStdOut = content => this.messages.push({
-                type: 'output',
-                outputType: this.isGrading ? 'grader' : 'stdout',
-                body: content,
-            })
-            const pushStdErr = content => this.messages.push({
-                type: 'output',
-                outputType: 'stderr',
-                body: content,
-            })
+            const getOutputType = () => {
+                if (this.isGrading) {
+                    return 'grader'
+                } else if (this.isPostrun) {
+                    return 'postrun'
+                } else {
+                    return 'stdout'
+                }
+            }
+            const pushStdOut = content => {
+                if (this.isLogging) {
+                    this.stdoutLog.push(content)
+                }
+                this.messages.push({
+                    type: 'output',
+                    outputType: getOutputType(),
+                    body: content,
+                })
+            }
+            const pushStdErr = content => {
+                if (this.isLogging) {
+                    this.stderrLog.push(content)
+                }
+                this.messages.push({
+                    type: 'output',
+                    outputType: 'stderr',
+                    body: content,
+                })
+            }
             const waitTextInput = () => this.inputMode = 'text'
             const waitRawInput = resolve => {
                 this.inputMode = 'raw'
@@ -424,16 +447,42 @@ export default {
             this.isFilesSaved = false
             this.$emit('edit-files', this.files)
         },
+        addTextFile(filename, body, options={}) {
+            const fileObject = {
+                type: 'text',
+                body: body,
+            }
+            Vue.set(this.files, filename, fileObject)
+            if (!options.silent) {
+                this.isFilesSaved = false
+                this.$emit('edit-files', this.files)
+            }
+        },
+        deleteFile(filename, options={}) {
+            if (!this.files.hasOwnProperty(filename)) {
+                return
+            }
+            if (this.activeFileKey === filename) {
+                this.activeFileKey = 'main.py'
+            }
+            Vue.delete(this.files, filename)
+            if (!options.silent) {
+                this.isFilesSaved = false
+                this.$emit('edit-files', this.files)
+            }
+        },
         setViewMode(viewMode) {
             this.viewMode = viewMode
         },
-        async runCode(code) {
+        async runCode(code, options={}) {
             if (code.trim() === '') {
                 return;
             }
-            this.isScreen = false
             this.showOutputColumn()
-            this.messages = []
+            if (!options.preserveOutput) {
+                this.isScreen = false
+                this.messages = []
+            }
             this.isRunning = true
 
             const isCs1mediaUsed = hasCs1media(code) || hasCs1media(this.editorCode)
@@ -454,23 +503,45 @@ export default {
                 },
             )
             this.isRunning = false
-            if (exit === 0) {
-                this.messages.push({
-                    type: 'system',
-                    body: this.gettext('msg.codeRunDone') + '\n',
-                })
-            } else {
-                this.messages.push({
-                    type: 'system',
-                    body: this.gettext('msg.errorOnRunning') + '\n',
-                })
+            if (!options.quiet) {
+                if (exit === 0) {
+                    this.messages.push({
+                        type: 'system',
+                        body: this.gettext('msg.codeRunDone') + '\n',
+                    })
+                } else {
+                    this.messages.push({
+                        type: 'system',
+                        body: this.gettext('msg.errorOnRunning') + '\n',
+                    })
+                }
             }
             if (!this.isFilesSaved) {
                 this.handleSave({ autosave: true })
             }
+            return exit
         },
-        runMain() {
-            return this.runCode(this.editorCode)
+        async runMain() {
+            if (this.files.hasOwnProperty('.postrun.py')) {
+                // Handle postrun script if exists.
+                this.stdoutLog = []
+                this.stderrLog = []
+                this.isLogging = true
+                const result = await this.runCode(this.editorCode)
+                this.isLogging = false
+                this.addTextFile('.stdout.log', this.stdoutLog.join(''), { silent: true })
+                this.addTextFile('.stderr.log', this.stderrLog.join(''), { silent: true })
+                this.addTextFile('.exit.log', `${result}`, { silent: true })
+                this.isPostrun = true
+                await this.runCode(this.files['.postrun.py'].body, { preserveOutput: true, quiet: true })
+                this.isPostrun = false
+                this.deleteFile('.stdout.log', { silent: true })
+                this.deleteFile('.stderr.log', { silent: true })
+                this.deleteFile('.exit.log', { silent: true })
+                return result
+            } else {
+                return await this.runCode(this.editorCode)
+            }
         },
         async runGrader() {
             if (!this.files.hasOwnProperty('.grader.py')) {
