@@ -340,7 +340,7 @@ export default {
                 items.push({
                     key: 'main.py',
                     name: 'main.py',
-                    type: 'dir',
+                    type: 'text',
                 })
             }
             

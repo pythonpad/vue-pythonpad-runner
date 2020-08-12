@@ -304,6 +304,9 @@ export default {
             for (const sourceFileKey of sourceFileKeys) {
                 const tokens = sourceFileKey.split('/')
                 const filename = tokens[tokens.length - 1] || (tokens[tokens.length - 2] + '/')
+                if (sourceFileKey === (targetFileKey + filename)) {
+                    continue
+                }
                 this.$emit('move-file', sourceFileKey, targetFileKey + filename)
             }
         },
