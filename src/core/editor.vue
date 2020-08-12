@@ -7,6 +7,7 @@
 import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/meta'
 import 'codemirror/mode/python/python'
+import 'codemirror/mode/markdown/markdown'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/nord.css'
 import 'codemirror/addon/comment/comment'
@@ -86,6 +87,8 @@ export default {
         getMode() {
             if (this.filename.endsWith('.py')) {
                 return 'python'
+            } else if (this.filename.endsWith('.md')) {
+                return 'markdown'
             } else {
                 return 'text'
             }
