@@ -234,8 +234,18 @@ export default {
             } else if (this.deleteFileKeys !== null) {
                 this.selectedFileKeys = ['main.py']
                 this.deleteFileKeys.sort((a, b) => (a < b ? 1 : (a > b ? -1 : 0)))
-                for (const key of this.deleteFileKeys) {
-                    this.$emit('delete-file', key)
+                for (const deleteFileKey of this.deleteFileKeys) {
+                    const isDir = deleteFileKey.endsWith('/')
+                    if (isDir) {
+                        const childKeys = Object.keys(this.files)
+                            .filter(key => key.startsWith(deleteFileKey))
+                        childKeys.sort((a, b) => (a < b ? 1 : (a > b ? -1 : 0))) // Sort in descending order.
+                        for (const key of childKeys) {
+                            this.$emit('delete-file', key)
+                        }
+                    } else {
+                        this.$emit('delete-file', deleteFileKey)
+                    }
                 }
                 this.deleteFileKeys = null
             }
