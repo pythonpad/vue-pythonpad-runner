@@ -183,7 +183,7 @@ export default {
             isGrading: false,
             isPostrun: false,
             isScreen: false,
-            isFileViewOpen: loadFromStorage('isFileViewOpen', false),
+            isFileViewOpen: false,
             isFilesTooBig: false,
             viewMode: 'basic',
             gettext: () => '',
