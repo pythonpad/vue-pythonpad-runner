@@ -1,6 +1,6 @@
 <template>
     <div class="pythonpad-runner">
-        <div class="toolbar-box">
+        <div class="toolbar-box" :class="{'is-framed': isFramed}">
             <toolbar
                 :gettext="gettext"
                 :isRunnerReady="isRunnerReady"
@@ -156,6 +156,7 @@ export default {
         'initSrc',
         'initFiles',
         'buttons',
+        'isFramed',
     ],
     components: {
         Console,
@@ -654,6 +655,9 @@ export default {
         width: 100%;
         height: 2.5rem;
         z-index: 500;
+    }
+    .toolbar-box.is-framed {
+        position: absolute;
     }
     .columns {
         width: 100%;
