@@ -45,7 +45,7 @@
                             ></file-browser>
                         </div>
                     </div>
-                    <div class="column full-column editor-column">
+                    <div v-if="isEditorVisible" class="column full-column editor-column">
                         <div 
                             class="fill-parent"
                             :class="{'is-hidden': activeFileKey !== 'main.py' }"
@@ -184,6 +184,7 @@ export default {
             isGrading: false,
             isPostrun: false,
             isScreen: false,
+            isEditorVisible: true,
             isFileViewOpen: false,
             isFilesTooBig: false,
             viewMode: 'basic',
@@ -289,12 +290,12 @@ export default {
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
-                staticUrl: this.brythonStaticUrl,
+                staticUrl: this.brythonStaticUrl || null,
                 hangerUrl: this.hangerUrl || '/hanger',
                 files: {},
-                paths: [
+                paths: this.staticUrl ? [
                     `${this.staticUrl}/brythonlib`,
-                ],
+                ] : [],
                 postInitModules: [
                     robotsModule,
                     mediaModule,
@@ -593,6 +594,12 @@ export default {
             if (this.$refs.outputColumn.offsetParent === null) {
                 this.viewMode = 'run'
             }
+        },
+        refreshEditor() {
+            this.isEditorVisible = false
+            setTimeout(() => {
+                this.isEditorVisible = true
+            }, 100)
         },
     },
     watch: {

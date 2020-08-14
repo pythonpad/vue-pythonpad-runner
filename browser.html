@@ -6,11 +6,25 @@
     <link rel="stylesheet" type="text/css" href="/node_modules/font-awesome/css/font-awesome.css">
     <script src="/node_modules/vue/dist/vue.js"></script>
     <script src="/lib/vue-pythonpad-runner.bundle.js"></script>
+    <style>
+        body {
+            background-color: #eee;
+            font-family: 'Lato', 'NanumGothic', 'Malgun Gothic', sans-serif;
+        }
+        .pad {
+            margin: 32px auto;
+            width: 840px;
+            height: 520px;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="pad" class="pad"></div>
     <script>
-        Pythonpad()
+        Pythonpad('pad', {
+            downloadable: true,
+        })
     </script>
 </body>
 
