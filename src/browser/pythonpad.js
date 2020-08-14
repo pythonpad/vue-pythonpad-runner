@@ -155,6 +155,7 @@ function Pythonpad(target, data={}) {
                 initSrc: localStorage.getItem(saveSrcKey) || initSrc,
                 initFiles: JSON.parse(localStorage.getItem(saveFilesKey)) || initFiles,
                 isFramed: data.fullscreen ? false : true,
+                hangerUrl: data.hangerUrl || 'https://www.pythonpad.co/hanger',
                 buttons: buttons,
             },
         })
