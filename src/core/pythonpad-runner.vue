@@ -124,6 +124,7 @@ import { getFilesWithImageProps } from '../utils/image-conv'
 import robotsModule from '!!raw-loader!../modules/cs1robots.brython.js'
 import mediaModule from '!!raw-loader!../modules/cs1media.brython.js'
 import graphicsModule from '!!raw-loader!../modules/cs1graphics.brython.js'
+import gradepadModule from '!!raw-loader!../modules/gradepad.brython.js'
 import './common.css'
 
 const FILES_SIZE_LIMIT = 2000000 // About 1.5MB
@@ -300,6 +301,7 @@ export default {
                     robotsModule,
                     mediaModule,
                     graphicsModule,
+                    gradepadModule,
                 ],
                 stdout: {
                     write(content) {
