@@ -75,6 +75,10 @@ export default {
                     'Cmd-S': () => this.$emit('save'),
                     'Shift-Ctrl-Enter': () => this.$emit('run'),
                     'Shift-Cmd-Enter': () => this.$emit('run'),
+                    'Shift-Ctrl-C': () => this.$emit('copy-pad'),
+                    'Shift-Cmd-C': () => this.$emit('copy-pad'),
+                    'Shift-Ctrl-V': () => this.$emit('paste-pad'),
+                    'Shift-Cmd-V': () => this.$emit('paste-pad'),
                 }
             });
             this.value = this.code

@@ -56,6 +56,8 @@
                                 :filename="`main.py`"
                                 @run="() => runMain()"
                                 @save="handleSave"
+                                @copy-pad="handleCopyPad"
+                                @paste-pad="handlePastePad"
                                 @change="handleEditorCodeChange"
                             ></editor>
                         </div>
@@ -396,6 +398,26 @@ export default {
             }
             this.isSaving = true
             this.$emit('save', saveObj, done, error)
+        },
+        handleCopyPad() {
+            const inputEl = document.createElement('textarea')
+            document.body.appendChild(inputEl)
+            inputEl.value = JSON.stringify({
+                title: 'title',
+                content: this.editorCode,
+                files: this.files,
+            })
+            inputEl.select()
+            document.execCommand('copy')
+            document.body.removeChild(inputEl)
+        },
+        async handlePastePad() {
+            const text = await navigator.clipboard.readText()
+            const value = JSON.parse(text)
+            if (value.content && value.files) {
+                this.editorCode = value.content
+                this.files = value.files
+            }
         },
         handleCreateFile(filename) {
             Vue.set(this.files, filename, {
