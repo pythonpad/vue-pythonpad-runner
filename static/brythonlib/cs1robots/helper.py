@@ -16,13 +16,30 @@ def is_world():
         return False
 
 def create_world(streets=None, avenues=None):
+    global __robot__
+    try:
+        if 'world_lock' in __robot__:
+            return
+    except:
+        pass
     width = 10 if avenues is None else avenues
     height = 10 if streets is None else streets
     if avenues is None:
         width = 10
-    global __robot__
     __robot__ = {}
     __robot__['world'] = World(width=width, height=height)
+
+def lock_world():
+    global __robot__
+    try:
+        __robot__['world_lock'] = True
+    except:
+        pass
+
+def load_world_from_dict(world_dict):
+    global __robot__
+    __robot__ = {}
+    __robot__['world'] = load_world_from_save(world_dict)
 
 def load_world_by_path(file_path):
     world_file = open(file_path, 'r')
@@ -37,6 +54,12 @@ def load_world_by_name(world_name):
     load_world_from_dict(get_world_dict(world_name))
 
 def load_world(arg):
+    global __robot__
+    try:
+        if 'world_lock' in __robot__:
+            return
+    except:
+        pass
     try:
         load_world_by_path(arg)
     except FileNotFoundError as e:
@@ -47,11 +70,6 @@ def load_world(arg):
 
 def save_world_to_dict():
     return __robot__['world'].to_save()
-
-def load_world_from_dict(world_dict):
-    global __robot__
-    __robot__ = {}
-    __robot__['world'] = load_world_from_save(world_dict)
 
 def get_world():
     return __robot__['world']
