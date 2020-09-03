@@ -1,3 +1,5 @@
+import sys
+
 
 class StdoutCollector:
     def __init__(self):
