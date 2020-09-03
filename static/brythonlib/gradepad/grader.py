@@ -1,5 +1,5 @@
 import sys
-
+from .phrases import load_phrase
 
 class Test:
     def __init__(self, grader, desc, fail_msg):
@@ -31,11 +31,12 @@ class Test:
         
 
 class Grader:
-    def __init__(self, pass_msg=None):
-        print('Grading...')
+    def __init__(self, pass_msg=None, locale=None):
         self.pass_msg = pass_msg
         self.failed = False
+        self.phrases = load_phrase(locale or 'en')
         self.tests = []
+        print('%s...' % self.phrases.grading)
         
     def test(self, desc, fail_msg=None):
         test = Test(self, desc, fail_msg)
@@ -57,15 +58,15 @@ class Grader:
             
         print()
         if self.failed:
-            self.print_error('Failed to finish the grading. \nPlease fix your code and try again!')
+            self.print_error(self.phrases.grading_failed)
         elif test_count == pass_count:
             if self.pass_msg:
                 print(self.pass_msg)
             else:
-                print('Everything is in place! Well done!')
+                print(self.phrases.grading_passed)
             self.save_passed_state()
         else:
-            self.print_error('Passed %d/%d tests. Please try again!' % (pass_count, test_count))
+            self.print_error(self.phrases.try_again.format(pass_count=pass_count, test_count=test_count))
             
     def fail(self):
         self.failed = True
@@ -74,6 +75,6 @@ class Grader:
         try:
             grade(self)
         except Exception as e:
-            self.print_error('An error has occurred in your code while grading. Failed to grade the code.')
+            self.print_error(self.phrases.error_occurred)
             raise e
         self.done()
