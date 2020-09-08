@@ -36,6 +36,13 @@ def lock_world():
     except:
         pass
 
+def unlock_world():
+    global __robot__
+    try:
+        del __robot__['world_lock']
+    except:
+        pass
+
 def load_world_from_dict(world_dict):
     global __robot__
     __robot__ = {}

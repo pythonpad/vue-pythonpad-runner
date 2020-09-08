@@ -257,7 +257,11 @@ export default {
             }
             const setRunnerReady = () => this.isRunnerReady = true
             const enableScreen = callback => {
-                this.isScreen = true
+                if (this.isScreen) {
+                    this.$refs.screen.innerHTML = ''
+                } else {
+                    this.isScreen = true
+                }
                 this.$nextTick(() => callback(this.$refs.screen))
             }
             const initRobotDrawHelper = () => {
