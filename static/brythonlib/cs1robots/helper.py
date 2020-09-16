@@ -28,7 +28,8 @@ def create_world(streets=None, avenues=None):
         width = 10
     __robot__ = {}
     __robot__['world'] = World(width=width, height=height)
-    del __robot__['robots']
+    if 'robots' in __robot__:
+        del __robot__['robots']
 
 def lock_world():
     global __robot__
@@ -48,7 +49,8 @@ def load_world_from_dict(world_dict):
     global __robot__
     __robot__ = {}
     __robot__['world'] = load_world_from_save(world_dict)
-    del __robot__['robots']
+    if 'robots' in __robot__:
+        del __robot__['robots']
 
 def load_world_by_path(file_path):
     world_file = open(file_path, 'r')
