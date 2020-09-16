@@ -87,6 +87,12 @@ def get_all_beepers():
 def get_all_beepers_dict():
     return get_world().get_all_beepers_dict()
 
+def get_all_robots():
+    if 'robots' in __robot__:
+        return __robot__['robots']
+    else:
+        return []
+
 class Robot(GeneralRobot):
     def __init__(self, avenue=None, street=None, orientation=None, beepers=0):
         global __robot__
@@ -95,6 +101,10 @@ class Robot(GeneralRobot):
         direction = orientation if orientation is not None else 'E'
         super().__init__(position=Position(column, row), direction=Direction(direction), beepers=beepers)
         __robot__['world'].add_piece(self)
+        if 'robots' not in __robot__:
+            __robot__['robots'] = [self]
+        else:
+            __robot__['robots'].append(self)
 
     def get_pos(self):
         return self.position.x + 1, self.position.y + 1
