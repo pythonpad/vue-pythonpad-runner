@@ -5,7 +5,7 @@ from .picture import Picture
 def create_picture(width, height, color=(0,0,0)):
     global __media__
     try:
-        if 'locked_picture' in __media__:
+        if ('locked_picture' in __media__) and ('lock_create' in __media__) and __media__['lock_create']:
             return __media__['locked_picture']
     except NameError:
         __media__ = {}
@@ -46,17 +46,20 @@ def load_picture(filename=None):
 
     return picture
 
-def lock_picture(picture):
+def lock_picture(picture, lock_create=False):
     global __media__
     try:
         __media__['locked_picture'] = picture
     except NameError:
         __media__ = {'locked_picture': picture}
+    if lock_create:
+        __media__['lock_create'] = True
 
 def unlock_picture():
     global __media__
     try:
         del __media__['locked_picture']
+        del __media__['lock_create']
     except:
         pass
 
