@@ -38,8 +38,8 @@ def conv_world(kaist_world_dict):
 
     return {
         'type': 'world',
-        'width': kaist_world_dict['streets'],
-        'height': kaist_world_dict['avenues'],
+        'width': kaist_world_dict['avenues'],
+        'height': kaist_world_dict['streets'],
         'pieces': pieces,
         'walls': walls
     }
@@ -133,8 +133,8 @@ worlds_data = {
         'beepers': {(7, 4): 1, (3, 7): 2, (7, 1): 19, (6, 6): 2, (3, 4): 2},
     },
     'rain2': {
-        'avenues': 10,
-        'streets': 13,
+        'avenues': 12,
+        'streets': 9,
         'walls': [(5, 6), (7, 6), (11, 6), (13, 6), (15, 6), (16, 5), (17, 4), (21, 4), (22, 5), (22, 9), (22, 11), (22, 15), (21, 16), (19, 16), (15, 16), (13, 16), (9, 16), (5, 16), (4, 15), (4, 13), (4, 9), (4, 7)],
         'beepers': {},
     },
