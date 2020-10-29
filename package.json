@@ -1,6 +1,6 @@
 {
   "name": "vue-pythonpad-runner",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A Vue.js component that supports pythonpad codes.",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,7 @@
   },
   "repository": "git@gitlab.com:intcoding/vue-pythonpad-runner.git",
   "author": "Jeongmin Byun <jmbyun91@gmail.com>",
-  "license": "UNLICENSED",
-  "private": true,
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
