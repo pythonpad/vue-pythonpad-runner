@@ -1,6 +1,101 @@
 # Vue Pythonpad Runner
 
-A Vue.js component that supports pythonpad compatible Python codes.
+A Python 3 programming environment as an embeddable Vue.js component. 
+**Vue Pythonpad Runner** allows users to edit and run multi-file Python 3 project based on [Brython Runner](https://github.com/pythonpad/brython-runner). 
+
+This component is designed to serve web-based programming exercises for Python-based CS1 courses; the component supports following educational libraries: [cs1robots](https://github.com/otfried/cs101/blob/master/modules/cs1robots.py), [cs1media](https://github.com/otfried/cs101/blob/master/modules/cs1media.py), and [cs1graphics](http://www.cs1graphics.org/). 
+
+## Demo
+
+See our [demo page](https://pythonpad.github.io) to see `vue-pythonpad-runner` in action.
+
+## Installation
+
+### Node.js
+
+```
+$ npm install vue-pythonpad-runner
+```
+
+## Usage
+
+### Browser
+
+The easiest way to use **Vue Pythonpad Runner** is to simply load the bundle script under `./lib` in the distribution. For example:
+
+```html
+<script src="lib/vue-pythonpad-runner.bundle.js"></script>
+```
+
+Having this script tag, a Vue Pythonpad Runner component can be used after being registrated like this:
+
+```javascript
+Vue.component('pythonpad-runner', VuePythonpadRunner)
+```
+
+### CommonJS
+
+Require the component like this:
+
+```javascript
+var VuePythonpadRunner = require('vue-pythonpad-runner').default;
+```
+
+or with `import` statement:
+
+```javascript
+import VuePythonpadRunner from 'vue-pythonpad-runner';
+```
+
+Use the component in vue instances:
+
+```javascript
+new Vue({
+    components: {
+        'vue-pythonpad-runner': VuePythonpadRunner,
+    },
+});
+```
+
+## Import and Use
+
+### Basic usage
+
+```html
+<pythonpad-runner 
+    id="runner"
+    ref="runner"
+    v-bind:init-src="src"
+    v-bind:init-files="files"
+    v-on:save="handleSave"
+></pythonpad-runner>
+<script>
+    new Vue({
+        el: '#runner',
+        data: {
+            src: 'import hello',
+            files: {
+                'hello.py': {
+                    type: 'text',
+                    body: 'print("hello world")',
+                },
+            },
+        },
+        methods: {
+            handleSave(save, done, error) {
+                if (save.autosave) {
+                    console.log('State autosave is required.');
+                } else {
+                    console.log('User requested to save the state.');
+                }
+                console.log('main.py code:', save.code);
+                console.log('files:', save.files);
+                done();
+            }
+        }
+    })
+</script>
+```
 
 ## Development
 
@@ -25,65 +120,3 @@ To build the library, run:
 ```
 $ yarn build
 ```
-
-Remember to build-and-commit when you update the project. 
-
-## Import and Use
-
-### Basic usage
-
-The easiest way to use **Vue Pythonpad Runner** is to simply load the bundle script under `./lib` in the distribution. For example:
-
-```html
-<script src="lib/vue-pythonpad-runner.bundle.js"></script>
-```
-
-Having this script tag, a Vue Pythonpad Runner component can be used after being registrated like this:
-
-```javascript
-Vue.component('pythonpad-runner', VuePythonpadRunner)
-```
-
-If you want to use VuePythonpadRunner in CommonJS environment, you can require the VuePythonpadRunner component from `./lib/vue-pythonpad-runner.js`. For example:
-
-```javascript
-var VuePythonpadRunner = require('vue-pythonpad-runner/lib/vue-pythonpad-runner.js').default;
-```
-
-or with `import` syntax, 
-
-```javascript
-import VuePythonpadRunner from 'vue-pythonpad-runner/lib/vue-pythonpad-runner.js';
-```
-
-For a working example, run `$ yarn dev` script and check out the example web page. This shows the `./index.html` file rendered on the browser with all dependencies ready.
-
-### VuePythonpadRunner
-
-`VuePythonpadRunner` component supports the web-based programming lessons specially designed for the component. 
-
-#### Props & Events
-
-Following props and events are available in the `VuePythonpadRunner` component. 
-
-**`lesson`**
-
-An object that includes all essential materials and contents for the *lesson* in the chat runner.
-
-**`initState`**
-
-An object that includes initial state to start from, in this lesson. It is like a save file to load in a game. User starts from the state that was saved from the last session.
-
-**`initSrc`**
-
-A user code content to start from.
-
-**`@saveState`**
-
-An event that is triggered when the current state in the lesson is changed. The current state is provided as a parameter.
-
-**`@saveSrc`**
-
-An event that is triggered when the current user code content has to be saved. The current user code content is provided as a parameter.
-
-
