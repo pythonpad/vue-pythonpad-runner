@@ -54,6 +54,7 @@
                                 :gettext="gettext"
                                 :code="editorCode"
                                 :filename="`main.py`"
+                                :editorOptions="editorOptions"
                                 @run="() => runMain()"
                                 @save="handleSave"
                                 @copy-pad="handleCopyPad"
@@ -69,8 +70,11 @@
                                 :gettext="gettext"
                                 :code="files[activeFileKey].body"
                                 :filename="activeFileKey"
+                                :editorOptions="editorOptions"
                                 @run="() => runMain()"
                                 @save="handleSave"
+                                @copy-pad="handleCopyPad"
+                                @paste-pad="handlePastePad"
                                 @change="body => handleTextFileChange(activeFileKey, body)"
                             ></editor>
                         </div>
@@ -153,10 +157,13 @@ export default {
     props: [
         'locale',
         'hangerUrl',
+        'paths',
         'initSrc',
         'initFiles',
         'buttons',
         'fullscreen',
+        'maxFiles',
+        'editorOptions'
     ],
     components: {
         Console,
@@ -294,9 +301,7 @@ export default {
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
-                hangerUrl: this.hangerUrl,
-                files: {},
-                paths: [],
+                paths: this.paths || [],
                 postInitModules: [
                     robotsModule,
                     mediaModule,
@@ -321,7 +326,6 @@ export default {
                     },
                 },
                 onMsg(type, value) {
-                    // console.log('onMsg', type, value)
                     switch (type) {
                         case 'screen.cs1robot.init':
                             initRobotDrawHelper()
@@ -353,6 +357,9 @@ export default {
                 onInit() {
                     setRunnerReady()
                 },
+            }
+            if (this.hangerUrl) {
+                options.hangerUrl = this.hangerUrl
             }
             this.runner = new BrythonRunner(options)
         },
@@ -400,11 +407,7 @@ export default {
         handleCopyPad() {
             const inputEl = document.createElement('textarea')
             document.body.appendChild(inputEl)
-            inputEl.value = JSON.stringify({
-                title: 'title',
-                content: this.editorCode,
-                files: this.files,
-            })
+            inputEl.value = JSON.stringify(this.getPad())
             inputEl.select()
             document.execCommand('copy')
             document.body.removeChild(inputEl)
@@ -412,10 +415,26 @@ export default {
         async handlePastePad() {
             const text = await navigator.clipboard.readText()
             const value = JSON.parse(text)
+            this.setPad(value)
+        },
+        setPad(value) {
             if (value.content && value.files) {
                 this.editorCode = value.content
                 this.files = value.files
             }
+        },
+        getPad() {
+            return {
+                title: 'title',
+                content: this.editorCode,
+                files: this.files,
+            }
+        },
+        setCode(value) {
+            this.editorCode = value
+        },
+        getCode() {
+            return this.editorCode
         },
         handleCreateFile(filename) {
             Vue.set(this.files, filename, {
@@ -606,7 +625,8 @@ export default {
             for (const [key, value] of Object.entries(this.files)) {
                 s += value.body.length
             }
-            if (s > FILES_SIZE_LIMIT) {
+            const maxFiles = this.maxFiles || FILES_SIZE_LIMIT
+            if (s > maxFiles) {
                 this.isFilesTooBig = true
             } else {
                 this.isFilesTooBig = false

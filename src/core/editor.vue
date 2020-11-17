@@ -52,6 +52,7 @@ export default {
         'code',
         'filename',
         'isRunning',
+        'editorOptions',
     ],
     data() {
         return {
@@ -69,6 +70,7 @@ export default {
                 ...DEFAULT_OPTIONS,
                 value: this.code,
                 mode: this.getMode(),
+                ...(this.editorOptions || {}),
                 extraKeys: {
                     ...DEFAULT_OPTIONS.extraKeys,
                     'Ctrl-S': () => this.$emit('save'),
@@ -79,6 +81,7 @@ export default {
                     'Shift-Cmd-C': () => this.$emit('copy-pad'),
                     'Shift-Ctrl-V': () => this.$emit('paste-pad'),
                     'Shift-Cmd-V': () => this.$emit('paste-pad'),
+                    ...((this.editorOptions || {}).extraKeys || {}),
                 }
             });
             this.value = this.code
