@@ -670,7 +670,8 @@ export default {
             return this.files.hasOwnProperty('.grader.py')
         },
         isPassed() {
-            return this.files.hasOwnProperty('.passed.json')
+            // Check ".passed.json" for the sake of backward compatibility
+            return this.files.hasOwnProperty('.passed') || this.files.hasOwnProperty('.passed.json')
         },
     },
 }

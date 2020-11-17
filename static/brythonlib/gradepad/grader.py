@@ -44,7 +44,7 @@ class Grader:
         return test
         
     def save_passed_state(self):
-        f = open('.passed.json', 'w')
+        f = open('.passed', 'w')
         f.close()
         
     def print_error(self, msg):
