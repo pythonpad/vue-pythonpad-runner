@@ -16,8 +16,6 @@
         <pythonpad-runner
             ref="runner"
             :locale="locale"
-            :brython-static-url="brythonStaticUrl"
-            :static-url="staticUrl"
             :init-src="code"
             :init-files="files"
             :buttons="buttons"
@@ -29,8 +27,6 @@
             el: '#app',
             data: {
                 locale: 'en',
-                brythonStaticUrl: '/node_modules/brython-runner/static',
-                staticUrl: '/static',
                 code: localStorage.getItem('saved-code') || 'print("hello world")',
                 files: JSON.parse(localStorage.getItem('saved-files')) || {
                     'input.txt': {
