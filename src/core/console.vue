@@ -51,7 +51,6 @@ export default {
     name: 'console',
     props: [
         'gettext',
-        'staticUrl',
         'messages',
         'inputMode'
     ],

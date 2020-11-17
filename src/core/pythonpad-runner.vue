@@ -1,6 +1,6 @@
 <template>
     <div class="pythonpad-runner">
-        <div class="toolbar-box" :class="{'is-framed': isFramed}">
+        <div class="toolbar-box" :class="{'is-framed': !fullscreen}">
             <toolbar
                 :gettext="gettext"
                 :isRunnerReady="isRunnerReady"
@@ -97,7 +97,6 @@
                         <console
                             ref="console"
                             :gettext="gettext"
-                            :staticUrl="staticUrl"
                             :messages="messages"
                             :inputMode="inputMode"
                             @send-text="text => sendText(text)"
@@ -153,13 +152,11 @@ export default {
     name: 'pythonpad-runner',
     props: [
         'locale',
-        'brythonStaticUrl',
-        'staticUrl',
         'hangerUrl',
         'initSrc',
         'initFiles',
         'buttons',
-        'isFramed',
+        'fullscreen',
     ],
     components: {
         Console,
@@ -297,12 +294,9 @@ export default {
             const options = {
                 codeName: '__main__', 
                 codeCwd: '.',
-                staticUrl: this.brythonStaticUrl || null,
-                hangerUrl: this.hangerUrl || '/hanger',
+                hangerUrl: this.hangerUrl,
                 files: {},
-                paths: this.staticUrl ? [
-                    `${this.staticUrl}/brythonlib`,
-                ] : [],
+                paths: [],
                 postInitModules: [
                     robotsModule,
                     mediaModule,

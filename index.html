@@ -27,10 +27,10 @@
         new Vue({
             el: '#app',
             data: {
-                locale: 'ko',
+                locale: 'en',
                 brythonStaticUrl: '/node_modules/brython-runner/static',
                 staticUrl: '/static',
-                code: localStorage.getItem('saved-code') || '',
+                code: localStorage.getItem('saved-code') || 'print("hello world")',
                 files: JSON.parse(localStorage.getItem('saved-files')) || {
                     'input.txt': {
                         type: 'text',
@@ -43,18 +43,18 @@
                 },
                 buttons: [
                     {
-                        label: '공유',
+                        label: 'Share',
                         fa: 'share',
                         callback: () => {
-                            alert('Share!')
+                            alert('Share button is clicked!')
                         },
                     },
                     {
-                        label: '리셋',
+                        label: 'Reset',
                         fa: 'undo',
                         class: 'is-danger',
                         callback: () => {
-                            alert('Reset!')
+                            alert('Reset button is clicked!')
                         },
                     },
                 ],
