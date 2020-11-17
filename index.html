@@ -14,6 +14,7 @@
 <body>
     <div class="app" id="app">
         <pythonpad-runner
+            ref="runner"
             :locale="locale"
             :brython-static-url="brythonStaticUrl"
             :static-url="staticUrl"
@@ -43,24 +44,19 @@
                 },
                 buttons: [
                     {
-                        label: 'Share',
-                        fa: 'share',
-                        callback: () => {
-                            alert('Share button is clicked!')
-                        },
-                    },
-                    {
                         label: 'Reset',
                         fa: 'undo',
                         class: 'is-danger',
                         callback: () => {
-                            alert('Reset button is clicked!')
+                            if (confirm('Are you sure you want to reset code?')) {
+                                window.runnerComponent.handleReset()
+                            }
                         },
                     },
                 ],
             },
             mounted() {
-
+                window.runnerComponent = this
             },
             methods: {
                 handleSave(save, done) {
@@ -71,6 +67,9 @@
                         localStorage.setItem('saved-files', JSON.stringify(save.files))
                     }
                     done()
+                },
+                handleReset() {
+                    this.$refs.runner.setCode('print("hello world")')
                 }
             }
         })

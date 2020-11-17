@@ -1598,10 +1598,10 @@ browserslist@^4.12.0, browserslist@^4.8.5:
     escalade "^3.1.0"
     node-releases "^1.1.61"
 
-brython-runner@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/brython-runner/-/brython-runner-1.0.5.tgz#a63fc846074ab9156bcfd6655b7cef79d351e51a"
-  integrity sha512-Jr7D6hjnayXJEo/ugZDqt32O4l7UBEIPtwNb3AyogxKnYLRLpQ1M3xp+5cx1xdICkJCafH9IhBs7nqq8ITs6Cg==
+brython-runner@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/brython-runner/-/brython-runner-1.0.9.tgz#d1b249bf4aca6dbbc2faa1b7ed7eb2dd0fbb719d"
+  integrity sha512-apF+5Y32ljAeYNdJv2qNUL/GjiwvENf/56Nuorocfz7HhhBCvB927nlYJP3c96MeRDuRlqX30UuZH/LsFh7WHA==
   dependencies:
     brython "3.8.10"
     raw-loader "^4.0.1"

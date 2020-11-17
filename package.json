@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.10.2",
-    "brython-runner": "^1.0.5",
+    "brython-runner": "^1.0.9",
     "codemirror": "^5.54.0",
     "font-awesome": "^4.7.0",
     "node-polyglot": "^2.4.0",
